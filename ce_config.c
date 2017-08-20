@@ -222,47 +222,64 @@ CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data){
      char* itr = ce_utf8_find_index(view->buffer->lines[view->cursor.y], view->cursor.x);
      char* comma = strchr(itr, ',');
      if(!comma) return CE_COMMAND_NO_ACTION;
+     if(!(*(comma + 1))) return CE_COMMAND_NO_ACTION;
      CeVimMotionRange_t motion_range = ce_vim_find_pair(view->buffer, view->cursor, '(', true);
 
      if(forward){
+          int64_t trailing_arg_len = 2; // include ', ' after the arg
           bool prepend_comma = false;
           char* arg_begin = strnrchr(view->buffer->lines[view->cursor.y], itr, ',');
           if(!arg_begin){
                // no comma before our arg, so 
                arg_begin = ce_utf8_find_index(view->buffer->lines[view->cursor.y], motion_range.start.x);
-               prepend_comma = true;
           }else{
                // check if we found a comma before the parens
                int64_t arg_begin_index = ce_utf8_strlen_between(view->buffer->lines[view->cursor.y], arg_begin) - 1;
-               if(arg_begin_index < motion_range.start.x){
+               if(motion_range.start.y == view->cursor.y && arg_begin_index < motion_range.start.x){
                     arg_begin = ce_utf8_find_index(view->buffer->lines[view->cursor.y], motion_range.start.x);
-                    prepend_comma = true;
+               }else{
+                    arg_begin += 2;
                }
           }
 
           bool remove_trailing_comma = false;
+          bool remove_trailing_space = false;
           char* next_arg_end = strchr(comma + 1, ',');
           if(!next_arg_end){
                next_arg_end = ce_utf8_find_index(view->buffer->lines[view->cursor.y], motion_range.end.x);
                remove_trailing_comma = true;
+               prepend_comma = true;
           }else{
                int64_t arg_end_index = ce_utf8_strlen_between(view->buffer->lines[view->cursor.y], next_arg_end) - 1;
-               if(arg_end_index > motion_range.end.x){
+               if(motion_range.end.y == view->cursor.y && arg_end_index > motion_range.end.x){
                     next_arg_end = ce_utf8_find_index(view->buffer->lines[view->cursor.y], motion_range.end.x);
                     remove_trailing_comma = true;
+               }else{
+                    // increment if we aren't at the end of the line, to account for the extra space
+                    if(*(next_arg_end + 1)){
+                         next_arg_end++;
+                    }else{
+                         trailing_arg_len--;
+                         remove_trailing_space = true;
+                    }
                }
           }
 
           char* next_arg_begin = comma + 2; // account for ', ' between arguments in my style
-          int64_t arg_len = (comma - arg_begin) + 2;
+          int64_t arg_len = (comma - arg_begin) + trailing_arg_len;
           int64_t next_arg_len = (next_arg_end - next_arg_begin) + 1;
 
           char* arg_dupe;
           if(prepend_comma){
                int64_t arg_dupe_len = arg_len + 2;
-               if(!remove_trailing_comma) arg_dupe_len--;
+               if(remove_trailing_comma) arg_dupe_len--;
                arg_dupe = malloc(arg_dupe_len + 1);
                snprintf(arg_dupe, arg_dupe_len, ", %s", arg_begin);
+               arg_dupe[arg_dupe_len] = 0;
+          }else if(remove_trailing_space){
+               int64_t arg_dupe_len = arg_len + 2;
+               arg_dupe = malloc(arg_dupe_len + 1);
+               snprintf(arg_dupe, arg_dupe_len, " %s", arg_begin);
                arg_dupe[arg_dupe_len] = 0;
           }else{
                if(remove_trailing_comma){
@@ -276,8 +293,34 @@ CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data){
                                     view->cursor.y};
           CePoint_t insert_point = ce_buffer_advance_point(view->buffer, remove_point, next_arg_len);
 
-          ce_buffer_remove_string(view->buffer, remove_point, arg_len + 1);
-          ce_buffer_insert_string(view->buffer, arg_dupe, insert_point);
+          int64_t remove_len = arg_len;
+          if(remove_trailing_space) remove_len++;
+
+          char* remove_string = ce_buffer_dupe_string(view->buffer, remove_point, remove_len);
+          if(!ce_buffer_remove_string(view->buffer, remove_point, remove_len)) return CE_COMMAND_NO_ACTION;
+
+          CeBufferChange_t change = {};
+          change.chain = false;
+          change.insertion = false;
+          change.string = remove_string;
+          change.location = remove_point;
+          change.cursor_before = view->cursor;
+          change.cursor_after = view->cursor;
+          ce_buffer_change(view->buffer, &change);
+
+          if(!ce_buffer_insert_string(view->buffer, arg_dupe, insert_point)) return CE_COMMAND_NO_ACTION;
+
+          CePoint_t end_cursor = ce_buffer_advance_point(view->buffer, view->cursor, next_arg_len);
+
+          change.chain = true;
+          change.insertion = true;
+          change.string = arg_dupe;
+          change.location = insert_point;
+          change.cursor_before = view->cursor;
+          change.cursor_after = end_cursor;
+          ce_buffer_change(view->buffer, &change);
+
+          view->cursor = end_cursor;
      }else{
 
      }
