@@ -1,0 +1,3 @@
+[submodule "ce"]
+	path = ce
+	url = https://www.github.com/justy989/ce

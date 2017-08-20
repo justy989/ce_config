@@ -1,0 +1,8 @@
+#!/bin/bash
+set -x
+SOURCES=(ce_config.c ce/ce_app.c ce/ce.c)
+FLAGS='-shared -Wall -Werror -Wshadow -Wextra -Wno-unused-parameter -std=gnu11 -ggdb3 -fpic -rdynamic'
+EXE='ce_config.so'
+LINK='-lncursesw'
+clang $FLAGS ${SOURCES[*]} -o $EXE $LINK
+
