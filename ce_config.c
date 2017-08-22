@@ -25,6 +25,7 @@ bool ce_init(App_t* app){
           config_options->horizontal_scroll_off = 10;
           config_options->vertical_scroll_off = 5;
           config_options->insert_spaces_on_tab = true;
+          config_options->terminal_scroll_back = 1024; // I use this for urxvt and don't seem to have any problems
      }
 
      // keybinds
@@ -40,6 +41,8 @@ bool ce_init(App_t* app){
                {{22}, "split_layout horizontal"}, // ctrl s
                {{19}, "split_layout vertical"}, // ctrl v
                {{16}, "select_parent_layout"}, // ctrl p
+               {{14}, "goto_next_destination"}, // ctrl n
+               {{16}, "goto_prev_destination"}, // ctrl p
                {{KEY_CLOSE}, "delete_layout"}, // ctrl q
                {{6}, "load_file"}, // ctrl f
                {{20}, "new_tab"}, // ctrl t
@@ -296,33 +299,14 @@ CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data){
           int64_t remove_len = arg_len;
           if(remove_trailing_space) remove_len++;
 
-          char* remove_string = ce_buffer_dupe_string(view->buffer, remove_point, remove_len);
-          if(!ce_buffer_remove_string(view->buffer, remove_point, remove_len)) return CE_COMMAND_NO_ACTION;
-
-          CeBufferChange_t change = {};
-          change.chain = false;
-          change.insertion = false;
-          change.string = remove_string;
-          change.location = remove_point;
-          change.cursor_before = view->cursor;
-          change.cursor_after = view->cursor;
-          ce_buffer_change(view->buffer, &change);
-
-          if(!ce_buffer_insert_string(view->buffer, arg_dupe, insert_point)) return CE_COMMAND_NO_ACTION;
+          if(!ce_buffer_remove_string_change(view->buffer, remove_point, remove_len, &view->cursor, view->cursor, false)){
+               return CE_COMMAND_NO_ACTION;
+          }
 
           CePoint_t end_cursor = ce_buffer_advance_point(view->buffer, view->cursor, next_arg_len);
-
-          change.chain = true;
-          change.insertion = true;
-          change.string = arg_dupe;
-          change.location = insert_point;
-          change.cursor_before = view->cursor;
-          change.cursor_after = end_cursor;
-          ce_buffer_change(view->buffer, &change);
-
-          view->cursor = end_cursor;
+          ce_buffer_insert_string_change(view->buffer, arg_dupe, insert_point, &view->cursor, end_cursor, true);
      }else{
-
+          // TODO: backward
      }
 
      return CE_COMMAND_SUCCESS;
