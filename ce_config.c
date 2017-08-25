@@ -9,7 +9,7 @@ typedef struct{
 }Config_t;
 
 CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, CeRune_t key);
-bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeVimMotionRange_t motion_range, CeView_t* view,
+bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
                                 CeVimBufferData_t* buffer_data, const CeConfigOptions_t* config_options);
 
 CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data);
@@ -102,6 +102,14 @@ bool ce_init(App_t* app){
           config->syntax_defs[CE_SYNTAX_COLOR_MATCH].bg = COLOR_WHITE;
           config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].fg = CE_SYNTAX_USE_CURRENT_COLOR;
           config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].bg = COLOR_BRIGHT_BLACK;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_ADD].fg = COLOR_GREEN;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_ADD].bg = CE_SYNTAX_USE_CURRENT_COLOR;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_REMOVE].fg = COLOR_RED;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_REMOVE].bg = CE_SYNTAX_USE_CURRENT_COLOR;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_HEADER].fg = COLOR_MAGENTA;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_HEADER].bg = CE_SYNTAX_USE_CURRENT_COLOR;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_COMMENT].fg = COLOR_BLUE;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_COMMENT].bg = CE_SYNTAX_USE_CURRENT_COLOR;
 
           app->syntax_defs = config->syntax_defs;
      }
@@ -132,14 +140,14 @@ CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, CeRun
      return CE_VIM_PARSE_IN_PROGRESS;
 }
 
-bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeVimMotionRange_t motion_range, CeView_t* view,
+bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
                                 CeVimBufferData_t* buffer_data, const CeConfigOptions_t* config_options){
      char reg = action->verb.character;
      if(reg == 0) reg = '"';
      CeVimYank_t* yank = vim->yanks + ce_vim_yank_register_index(reg);
      if(!yank->text) return false;
 
-     bool do_not_include_end = ce_vim_motion_range_sort(&motion_range);
+     bool do_not_include_end = ce_range_sort(&motion_range);
 
      if(action->motion.function == ce_vim_motion_little_word ||
         action->motion.function == ce_vim_motion_big_word ||
@@ -222,11 +230,11 @@ CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data){
 
      if(!ce_buffer_contains_point(view->buffer, view->cursor)) return CE_COMMAND_NO_ACTION;
 
-     char* itr = ce_utf8_find_index(view->buffer->lines[view->cursor.y], view->cursor.x);
+     char* itr = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], view->cursor.x);
      char* comma = strchr(itr, ',');
      if(!comma) return CE_COMMAND_NO_ACTION;
      if(!(*(comma + 1))) return CE_COMMAND_NO_ACTION;
-     CeVimMotionRange_t motion_range = ce_vim_find_pair(view->buffer, view->cursor, '(', true);
+     CeRange_t motion_range = ce_vim_find_pair(view->buffer, view->cursor, '(', true);
 
      if(forward){
           int64_t trailing_arg_len = 2; // include ', ' after the arg
@@ -234,12 +242,12 @@ CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data){
           char* arg_begin = strnrchr(view->buffer->lines[view->cursor.y], itr, ',');
           if(!arg_begin){
                // no comma before our arg, so 
-               arg_begin = ce_utf8_find_index(view->buffer->lines[view->cursor.y], motion_range.start.x);
+               arg_begin = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], motion_range.start.x);
           }else{
                // check if we found a comma before the parens
                int64_t arg_begin_index = ce_utf8_strlen_between(view->buffer->lines[view->cursor.y], arg_begin) - 1;
                if(motion_range.start.y == view->cursor.y && arg_begin_index < motion_range.start.x){
-                    arg_begin = ce_utf8_find_index(view->buffer->lines[view->cursor.y], motion_range.start.x);
+                    arg_begin = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], motion_range.start.x);
                }else{
                     arg_begin += 2;
                }
@@ -249,13 +257,13 @@ CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data){
           bool remove_trailing_space = false;
           char* next_arg_end = strchr(comma + 1, ',');
           if(!next_arg_end){
-               next_arg_end = ce_utf8_find_index(view->buffer->lines[view->cursor.y], motion_range.end.x);
+               next_arg_end = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], motion_range.end.x);
                remove_trailing_comma = true;
                prepend_comma = true;
           }else{
                int64_t arg_end_index = ce_utf8_strlen_between(view->buffer->lines[view->cursor.y], next_arg_end) - 1;
                if(motion_range.end.y == view->cursor.y && arg_end_index > motion_range.end.x){
-                    next_arg_end = ce_utf8_find_index(view->buffer->lines[view->cursor.y], motion_range.end.x);
+                    next_arg_end = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], motion_range.end.x);
                     remove_trailing_comma = true;
                }else{
                     // increment if we aren't at the end of the line, to account for the extra space
