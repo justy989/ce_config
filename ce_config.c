@@ -60,6 +60,8 @@ bool ce_init(App_t* app){
                {{24}, "switch_to_terminal"}, // ctrl x
                {{2}, "switch_buffer"}, // ctrl b
                {{343}, "goto_destination_in_line"}, // return
+               {{9}, "jump_list previous"}, // ctrl + o
+               {{15}, "jump_list next"}, // ctrl + i
                {{'\\', 's', 'f'}, "slide_arg forward"},
                {{'\\', 's', 'b'}, "slide_arg backward"},
           };
