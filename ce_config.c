@@ -56,7 +56,6 @@ bool ce_init(App_t* app){
                {{'\\', '?'}, "regex_search backward"},
                {{'"', '?'}, "show_yanks"},
                {{'\\', 'r'}, "redraw"},
-               {{'\\', 'c'}, "reload_config"},
                {{'\\', 'f'}, "reload_file"},
                {{24}, "switch_to_terminal"}, // ctrl x
                {{2}, "switch_buffer"}, // ctrl b
@@ -65,6 +64,8 @@ bool ce_init(App_t* app){
                {{15}, "jump_list next"}, // ctrl + i
                {{'\\', 's', 'f'}, "slide_arg forward"},
                {{'\\', 's', 'b'}, "slide_arg backward"},
+               {{'\\', 'b'}, "terminal_command ./build"},
+               {{'\\', 'c'}, "terminal_command ./clean"},
           };
 
           convert_bind_defs(&app->key_binds[CE_VIM_MODE_NORMAL], normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
