@@ -26,6 +26,7 @@ bool ce_init(App_t* app){
           config_options->vertical_scroll_off = 5;
           config_options->insert_spaces_on_tab = true;
           config_options->terminal_scroll_back = 1024; // I use this for urxvt and don't seem to have any problems
+          config_options->line_number = CE_LINE_NUMBER_NONE;
      }
 
      // keybinds
@@ -116,6 +117,8 @@ bool ce_init(App_t* app){
           config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_SELECTED].bg = COLOR_WHITE;
           config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_MATCH].fg = COLOR_BRIGHT_CYAN;
           config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_MATCH].bg = CE_SYNTAX_USE_CURRENT_COLOR;
+          config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].fg = COLOR_WHITE;
+          config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].bg = COLOR_DEFAULT;
 
           app->syntax_defs = config->syntax_defs;
      }
