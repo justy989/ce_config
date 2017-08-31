@@ -14,7 +14,7 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
 
 CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data);
 
-bool ce_init(App_t* app){
+bool ce_init(CeApp_t* app){
      Config_t* config = malloc(sizeof(*config));
      app->user_config_data = config;
 
@@ -31,7 +31,7 @@ bool ce_init(App_t* app){
 
      // keybinds
      {
-          KeyBindDef_t normal_mode_bind_defs[] = {
+          CeKeyBindDef_t normal_mode_bind_defs[] = {
                {{'\\', 'q'}, "quit"},
                {{8}, "select_adjacent_layout left"}, // ctrl h
                {{12}, "select_adjacent_layout right"}, // ctrl l
@@ -66,14 +66,15 @@ bool ce_init(App_t* app){
                {{'\\', 's', 'b'}, "slide_arg backward"},
                {{'\\', 'b'}, "terminal_command ./build"},
                {{'\\', 'c'}, "terminal_command ./clean"},
+               {{'K'}, "man_page_on_word_under_cursor"},
           };
 
-          convert_bind_defs(&app->key_binds[CE_VIM_MODE_NORMAL], normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
+          ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
      }
 
      // vim bindings
      {
-          set_vim_key_bind(app->vim.key_binds, &app->vim.key_bind_count, 'S', &custom_vim_parse_verb_substitute);
+          ce_set_vim_key_bind(app->vim.key_binds, &app->vim.key_bind_count, 'S', &custom_vim_parse_verb_substitute);
      }
 
      // syntax
@@ -131,13 +132,13 @@ bool ce_init(App_t* app){
           };
 
           int64_t command_entry_count = sizeof(command_entries) / sizeof(command_entries[0]);
-          extend_commands(&app->command_entries, &app->command_entry_count, command_entries, command_entry_count);
+          ce_extend_commands(&app->command_entries, &app->command_entry_count, command_entries, command_entry_count);
      }
 
      return true;
 }
 
-bool ce_free(App_t* app){
+bool ce_free(CeApp_t* app){
      Config_t* config = app->user_config_data;
      free(config);
      return true;
@@ -216,7 +217,7 @@ char* strnrchr(char* begin, char* end, char ch){
 
 CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data){
      if(command->arg_count != 1) return CE_COMMAND_PRINT_HELP;
-     App_t* app = user_data;
+     CeApp_t* app = user_data;
      CeView_t* view = NULL;
      CeLayout_t* tab_layout = app->tab_list_layout->tab_list.current;
 
