@@ -12,7 +12,8 @@ CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, CeRun
 bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
                                 CeVimBufferData_t* buffer_data, const CeConfigOptions_t* config_options);
 
-CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data);
+CeCommandStatus_t command_hot_mark_set(CeCommand_t* command, void* user_data);
+CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data);
 
 bool ce_init(CeApp_t* app){
      Config_t* config = malloc(sizeof(*config));
@@ -67,6 +68,8 @@ bool ce_init(CeApp_t* app){
                {{'\\', 'b'}, "terminal_command ./build"},
                {{'\\', 'c'}, "terminal_command ./clean"},
                {{'K'}, "man_page_on_word_under_cursor"},
+               {{' '}, "hot_mark_set"},
+               {{KEY_BACKSPACE}, "hot_mark_goto"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
@@ -128,7 +131,8 @@ bool ce_init(CeApp_t* app){
      // custom commands
      {
           CeCommandEntry_t command_entries[] = {
-               {command_slide_arg, "slide_arg", "shift an argument either 'forward' or 'backward' in a list"},
+               {command_hot_mark_set, "hot_mark_set", "set the hot mark"},
+               {command_hot_mark_goto, "hot_mark_goto", "goto the hot mark"},
           };
 
           int64_t command_entry_count = sizeof(command_entries) / sizeof(command_entries[0]);
@@ -206,127 +210,49 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
      return true;
 }
 
-char* strnrchr(char* begin, char* end, char ch){
-     while(end >= begin){
-          if(*end == ch) return end;
-          end--;
+bool get_layout_and_view(CeApp_t* app, CeView_t** view, CeLayout_t** tab_layout){
+     *tab_layout = app->tab_list_layout->tab_list.current;
+
+     if(app->input_mode) return false;
+
+     if((*tab_layout)->tab.current->type == CE_LAYOUT_TYPE_VIEW){
+          *view = &(*tab_layout)->tab.current->view;
+          return true;
      }
 
-     return NULL;
+     return true;
 }
 
-CeCommandStatus_t command_slide_arg(CeCommand_t* command, void* user_data){
-     if(command->arg_count != 1) return CE_COMMAND_PRINT_HELP;
+CeCommandStatus_t command_hot_mark_set(CeCommand_t* command, void* user_data){
+     if(command->arg_count != 0) return CE_COMMAND_PRINT_HELP;
+
      CeApp_t* app = user_data;
      CeView_t* view = NULL;
-     CeLayout_t* tab_layout = app->tab_list_layout->tab_list.current;
+     CeLayout_t* tab_layout = NULL;
 
-     if(app->input_mode) return CE_COMMAND_NO_ACTION;
+     if(!get_layout_and_view(app, &view, &tab_layout)) return CE_COMMAND_NO_ACTION;
 
-     if(tab_layout->tab.current->type == CE_LAYOUT_TYPE_VIEW){
-          view = &tab_layout->tab.current->view;
-     }else{
-          return CE_COMMAND_NO_ACTION;
-     }
+     CeAppBufferData_t* buffer_data = view->buffer->app_data;
+     CeVimBufferData_t* vim_buffer_data = &buffer_data->vim;
+     CePoint_t* destination = vim_buffer_data->marks + ce_vim_yank_register_index(' ');
+     *destination = view->cursor;
 
-     bool forward = false;
+     return CE_COMMAND_SUCCESS;
+}
 
-     if(command->args[0].type == CE_COMMAND_ARG_STRING && strcmp(command->args[0].string, "forward") == 0){
-          forward = true;
-     }else if(command->args[0].type == CE_COMMAND_ARG_STRING && strcmp(command->args[0].string, "backward") == 0){
-          // pass
-     }else{
-          return CE_COMMAND_PRINT_HELP;
-     }
+CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data){
+     if(command->arg_count != 0) return CE_COMMAND_PRINT_HELP;
 
-     if(!ce_buffer_contains_point(view->buffer, view->cursor)) return CE_COMMAND_NO_ACTION;
+     CeApp_t* app = user_data;
+     CeView_t* view = NULL;
+     CeLayout_t* tab_layout = NULL;
 
-     char* itr = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], view->cursor.x);
-     char* comma = strchr(itr, ',');
-     if(!comma) return CE_COMMAND_NO_ACTION;
-     if(!(*(comma + 1))) return CE_COMMAND_NO_ACTION;
-     CeRange_t motion_range = ce_vim_find_pair(view->buffer, view->cursor, '(', true);
+     if(!get_layout_and_view(app, &view, &tab_layout)) return CE_COMMAND_NO_ACTION;
 
-     if(forward){
-          int64_t trailing_arg_len = 2; // include ', ' after the arg
-          bool prepend_comma = false;
-          char* arg_begin = strnrchr(view->buffer->lines[view->cursor.y], itr, ',');
-          if(!arg_begin){
-               // no comma before our arg, so 
-               arg_begin = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], motion_range.start.x);
-          }else{
-               // check if we found a comma before the parens
-               int64_t arg_begin_index = ce_utf8_strlen_between(view->buffer->lines[view->cursor.y], arg_begin) - 1;
-               if(motion_range.start.y == view->cursor.y && arg_begin_index < motion_range.start.x){
-                    arg_begin = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], motion_range.start.x);
-               }else{
-                    arg_begin += 2;
-               }
-          }
-
-          bool remove_trailing_comma = false;
-          bool remove_trailing_space = false;
-          char* next_arg_end = strchr(comma + 1, ',');
-          if(!next_arg_end){
-               next_arg_end = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], motion_range.end.x);
-               remove_trailing_comma = true;
-               prepend_comma = true;
-          }else{
-               int64_t arg_end_index = ce_utf8_strlen_between(view->buffer->lines[view->cursor.y], next_arg_end) - 1;
-               if(motion_range.end.y == view->cursor.y && arg_end_index > motion_range.end.x){
-                    next_arg_end = ce_utf8_iterate_to(view->buffer->lines[view->cursor.y], motion_range.end.x);
-                    remove_trailing_comma = true;
-               }else{
-                    // increment if we aren't at the end of the line, to account for the extra space
-                    if(*(next_arg_end + 1)){
-                         next_arg_end++;
-                    }else{
-                         trailing_arg_len--;
-                         remove_trailing_space = true;
-                    }
-               }
-          }
-
-          char* next_arg_begin = comma + 2; // account for ', ' between arguments in my style
-          int64_t arg_len = (comma - arg_begin) + trailing_arg_len;
-          int64_t next_arg_len = (next_arg_end - next_arg_begin) + 1;
-
-          char* arg_dupe;
-          if(prepend_comma){
-               int64_t arg_dupe_len = arg_len + 2;
-               if(remove_trailing_comma) arg_dupe_len--;
-               arg_dupe = malloc(arg_dupe_len + 1);
-               snprintf(arg_dupe, arg_dupe_len, ", %s", arg_begin);
-               arg_dupe[arg_dupe_len] = 0;
-          }else if(remove_trailing_space){
-               int64_t arg_dupe_len = arg_len + 2;
-               arg_dupe = malloc(arg_dupe_len + 1);
-               snprintf(arg_dupe, arg_dupe_len, " %s", arg_begin);
-               arg_dupe[arg_dupe_len] = 0;
-          }else{
-               if(remove_trailing_comma){
-                    arg_dupe = strndup(arg_begin, arg_len - 1);
-               }else{
-                    arg_dupe = strndup(arg_begin, arg_len);
-               }
-          }
-
-          CePoint_t remove_point = {ce_utf8_strlen_between(view->buffer->lines[view->cursor.y], arg_begin) - 1,
-                                    view->cursor.y};
-          CePoint_t insert_point = ce_buffer_advance_point(view->buffer, remove_point, next_arg_len);
-
-          int64_t remove_len = arg_len;
-          if(remove_trailing_space) remove_len++;
-
-          if(!ce_buffer_remove_string_change(view->buffer, remove_point, remove_len, &view->cursor, view->cursor, false)){
-               return CE_COMMAND_NO_ACTION;
-          }
-
-          CePoint_t end_cursor = ce_buffer_advance_point(view->buffer, view->cursor, next_arg_len);
-          ce_buffer_insert_string_change(view->buffer, arg_dupe, insert_point, &view->cursor, end_cursor, true);
-     }else{
-          // TODO: backward
-     }
+     CeAppBufferData_t* buffer_data = view->buffer->app_data;
+     CeVimBufferData_t* vim_buffer_data = &buffer_data->vim;
+     CePoint_t* destination = vim_buffer_data->marks + ce_vim_yank_register_index(' ');
+     view->cursor = *destination;
 
      return CE_COMMAND_SUCCESS;
 }
