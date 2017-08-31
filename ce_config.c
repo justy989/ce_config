@@ -56,7 +56,7 @@ bool ce_init(CeApp_t* app){
                {{'\\', '/'}, "regex_search forward"},
                {{'\\', '?'}, "regex_search backward"},
                {{'"', '?'}, "show_yanks"},
-               {{'\\', 'r'}, "redraw"},
+               {{'g', 'r'}, "redraw"},
                {{'\\', 'f'}, "reload_file"},
                {{24}, "switch_to_terminal"}, // ctrl x
                {{2}, "switch_buffer"}, // ctrl b
@@ -67,6 +67,7 @@ bool ce_init(CeApp_t* app){
                {{'\\', 's', 'b'}, "slide_arg backward"},
                {{'\\', 'b'}, "terminal_command ./build"},
                {{'\\', 'c'}, "terminal_command ./clean"},
+               {{'\\', 'r'}, "terminal_command ./game"},
                {{'K'}, "man_page_on_word_under_cursor"},
                {{' '}, "hot_mark_set"},
                {{KEY_BACKSPACE}, "hot_mark_goto"},
