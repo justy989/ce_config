@@ -42,7 +42,7 @@ bool ce_init(CeApp_t* app){
                {{'g', 'b'}, "show_buffers"},
                {{22}, "split_layout horizontal"}, // ctrl s
                {{19}, "split_layout vertical"}, // ctrl v
-               {{16}, "select_parent_layout"}, // ctrl p
+               {{1}, "select_parent_layout"}, // ctrl a
                {{14}, "goto_next_destination"}, // ctrl n
                {{16}, "goto_prev_destination"}, // ctrl p
                {{KEY_CLOSE}, "delete_layout"}, // ctrl q
