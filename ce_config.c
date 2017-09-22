@@ -1,4 +1,4 @@
-#include "ce/ce_app.h"
+#include "ce_app.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -65,9 +65,8 @@ bool ce_init(CeApp_t* app){
                {{15}, "jump_list next"}, // ctrl + i
                {{'\\', 's', 'f'}, "slide_arg forward"},
                {{'\\', 's', 'b'}, "slide_arg backward"},
-               {{'\\', 'b'}, "terminal_command ./build"},
-               {{'\\', 'c'}, "terminal_command ./clean"},
-               {{'\\', 'r'}, "terminal_command ./game"},
+               {{'\\', 'b'}, "terminal_command make"},
+               {{'\\', 'c'}, "terminal_command make clean"},
                {{'K'}, "man_page_on_word_under_cursor"},
                {{' '}, "hot_mark_set"},
                {{KEY_BACKSPACE}, "hot_mark_goto"},
