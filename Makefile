@@ -1,6 +1,6 @@
 CC ?= clang
 CE_DIR ?= ce
-CFLAGS := -Wall -Werror -Wshadow -Wextra -Wno-unused-parameter -std=gnu11 -ggdb3 -fPIC
+CFLAGS := -I$(CE_DIR) -Wall -Werror -Wshadow -Wextra -Wno-unused-parameter -std=gnu11 -ggdb3 -fPIC
 LDFLAGS := -rdynamic -shared -lncursesw
 
 .PHONY: all clean
