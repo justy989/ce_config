@@ -163,17 +163,12 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
      CeVimYank_t* yank = vim->yanks + ce_vim_yank_register_index(reg);
      if(!yank->text) return false;
 
-     bool do_not_include_end = ce_range_sort(&motion_range);
-
-     if(action->motion.function == ce_vim_motion_little_word ||
-        action->motion.function == ce_vim_motion_big_word ||
-        action->motion.function == ce_vim_motion_begin_little_word ||
-        action->motion.function == ce_vim_motion_begin_big_word){
-          do_not_include_end = true;
+     ce_range_sort(&motion_range);
+     if(action->exclude_end){
+          motion_range.end = ce_buffer_advance_point(view->buffer, motion_range.end, -1);
      }
 
      // delete the range
-     if(do_not_include_end) motion_range.end = ce_buffer_advance_point(view->buffer, motion_range.end, -1);
      int64_t delete_len = ce_buffer_range_len(view->buffer, motion_range.start, motion_range.end);
      char* removed_string = ce_buffer_dupe_string(view->buffer, motion_range.start, delete_len);
      if(!ce_buffer_remove_string(view->buffer, motion_range.start, delete_len)){
