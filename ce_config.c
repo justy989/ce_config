@@ -63,6 +63,7 @@ bool ce_init(CeApp_t* app){
                {{343}, "goto_destination_in_line"}, // return
                {{9}, "jump_list previous"}, // ctrl + o
                {{15}, "jump_list next"}, // ctrl + i
+               // {{5}, ""}, // ctrl + e
                {{'\\', 's', 'f'}, "slide_arg forward"},
                {{'\\', 's', 'b'}, "slide_arg backward"},
                {{'\\', 'b'}, "terminal_command ./build"},
