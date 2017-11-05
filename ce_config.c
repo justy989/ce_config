@@ -71,6 +71,7 @@ bool ce_init(CeApp_t* app){
                {{'K'}, "man_page_on_word_under_cursor"},
                {{' '}, "hot_mark_set"},
                {{KEY_BACKSPACE}, "hot_mark_goto"},
+               {{'\\', 't'}, "new_terminal"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
@@ -110,7 +111,7 @@ bool ce_init(CeApp_t* app){
           config->syntax_defs[CE_SYNTAX_COLOR_MATCH].fg = CE_SYNTAX_USE_CURRENT_COLOR;
           config->syntax_defs[CE_SYNTAX_COLOR_MATCH].bg = COLOR_WHITE;
           config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].fg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].bg = COLOR_BRIGHT_BLACK;
+          config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].bg = COLOR_BLACK;
           config->syntax_defs[CE_SYNTAX_COLOR_DIFF_ADD].fg = COLOR_GREEN;
           config->syntax_defs[CE_SYNTAX_COLOR_DIFF_ADD].bg = CE_SYNTAX_USE_CURRENT_COLOR;
           config->syntax_defs[CE_SYNTAX_COLOR_DIFF_REMOVE].fg = COLOR_RED;
@@ -125,6 +126,9 @@ bool ce_init(CeApp_t* app){
           config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_MATCH].bg = CE_SYNTAX_USE_CURRENT_COLOR;
           config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].fg = COLOR_WHITE;
           config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].bg = COLOR_DEFAULT;
+
+          app->config_options.ui_fg_color = COLOR_DEFAULT;
+          app->config_options.ui_bg_color = COLOR_BRIGHT_BLACK;
 
           app->syntax_defs = config->syntax_defs;
      }
