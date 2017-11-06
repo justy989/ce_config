@@ -40,8 +40,8 @@ bool ce_init(CeApp_t* app){
                {{10}, "select_adjacent_layout down"}, // ctrl j
                {{23}, "save_buffer"}, // ctrl w
                {{'g', 'b'}, "show_buffers"},
-               {{22}, "split_layout horizontal"}, // ctrl s
-               {{19}, "split_layout vertical"}, // ctrl v
+               {{22}, "split_layout horizontal"}, // ctrl v
+               {{19}, "split_layout vertical"}, // ctrl s
                {{1}, "select_parent_layout"}, // ctrl a
                {{14}, "goto_next_destination"}, // ctrl n
                {{16}, "goto_prev_destination"}, // ctrl p
