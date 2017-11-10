@@ -15,6 +15,8 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
 CeCommandStatus_t command_hot_mark_set(CeCommand_t* command, void* user_data);
 CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data);
 CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data);
+CeCommandStatus_t command_cscope_symbol_under_cursor(CeCommand_t* command, void* user_data);
+CeCommandStatus_t command_cscope_caller_under_cursor(CeCommand_t* command, void* user_data);
 
 bool ce_init(CeApp_t* app){
      Config_t* config = malloc(sizeof(*config));
@@ -141,6 +143,8 @@ bool ce_init(CeApp_t* app){
                {command_hot_mark_set, "hot_mark_set", "set the hot mark"},
                {command_hot_mark_goto, "hot_mark_goto", "goto the hot mark"},
                {command_grep_word_under_cursor, "grep_word_under_cursor", "run 'fgrep -n <word> *' on the word under the cursor"},
+               {command_cscope_symbol_under_cursor, "cscope_symbol_under_cursor", "run 'cscope -L1<word>' on the word under the cursor"},
+               {command_cscope_caller_under_cursor, "cscope_caller_under_cursor", "run 'cscope -L3<word>' on the word under the cursor"},
           };
 
           int64_t command_entry_count = sizeof(command_entries) / sizeof(command_entries[0]);
@@ -259,7 +263,7 @@ CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data){
      return CE_COMMAND_SUCCESS;
 }
 
-CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data){
+CeCommandStatus_t run_command_on_word_under_cursor(CeCommand_t* command, void* user_data, const char* format_string){
      if(command->arg_count != 0) return CE_COMMAND_PRINT_HELP;
 
      CeApp_t* app = (CeApp_t*)(user_data);
@@ -277,9 +281,21 @@ CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* use
      char* word = ce_buffer_dupe_string(view->buffer, range.start, (range.end.x - range.start.x) + 1);
      if(!word) return CE_COMMAND_NO_ACTION;
      char cmd[128];
-     snprintf(cmd, 128, "fgrep -n %s *", word);
+     snprintf(cmd, 128, format_string, word);
      free(word);
      ce_run_command_in_terminal(app->last_terminal, cmd);
 
      return CE_COMMAND_SUCCESS;
+}
+
+CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data){
+     return run_command_on_word_under_cursor(command, user_data, "fgrep -n %s *");
+}
+
+CeCommandStatus_t command_cscope_symbol_under_cursor(CeCommand_t* command, void* user_data){
+     return run_command_on_word_under_cursor(command, user_data, "cscope -L1%s");
+}
+
+CeCommandStatus_t command_cscope_caller_under_cursor(CeCommand_t* command, void* user_data){
+     return run_command_on_word_under_cursor(command, user_data, "cscope -L3%s");
 }
