@@ -14,6 +14,7 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
 
 CeCommandStatus_t command_hot_mark_set(CeCommand_t* command, void* user_data);
 CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data);
+CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data);
 
 bool ce_init(CeApp_t* app){
      Config_t* config = malloc(sizeof(*config));
@@ -68,11 +69,13 @@ bool ce_init(CeApp_t* app){
                {{'\\', 's', 'b'}, "slide_arg backward"},
                {{'\\', 'b'}, "terminal_command ./build"},
                {{'\\', 'c'}, "terminal_command ./clean"},
-               {{'\\', 'r'}, "terminal_command ./game"},
+               {{'\\', 'g'}, "terminal_command ./game"},
+               {{'\\', 'r'}, "replace_all"},
                {{'K'}, "man_page_on_word_under_cursor"},
                {{' '}, "hot_mark_set"},
                {{KEY_BACKSPACE}, "hot_mark_goto"},
                {{'\\', 't'}, "new_terminal"},
+               {{'\\', 'w'}, "grep_word_under_cursor"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
@@ -109,8 +112,6 @@ bool ce_init(CeApp_t* app){
           config->syntax_defs[CE_SYNTAX_COLOR_TRAILING_WHITESPACE].bg = COLOR_RED;
           config->syntax_defs[CE_SYNTAX_COLOR_VISUAL].fg = CE_SYNTAX_USE_CURRENT_COLOR;
           config->syntax_defs[CE_SYNTAX_COLOR_VISUAL].bg = COLOR_WHITE;
-          config->syntax_defs[CE_SYNTAX_COLOR_MATCH].fg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_MATCH].bg = COLOR_WHITE;
           config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].fg = CE_SYNTAX_USE_CURRENT_COLOR;
           config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].bg = COLOR_BLACK;
           config->syntax_defs[CE_SYNTAX_COLOR_DIFF_ADD].fg = COLOR_GREEN;
@@ -139,6 +140,7 @@ bool ce_init(CeApp_t* app){
           CeCommandEntry_t command_entries[] = {
                {command_hot_mark_set, "hot_mark_set", "set the hot mark"},
                {command_hot_mark_goto, "hot_mark_goto", "goto the hot mark"},
+               {command_grep_word_under_cursor, "grep_word_under_cursor", "run 'fgrep -n <word> *' on the word under the cursor"},
           };
 
           int64_t command_entry_count = sizeof(command_entries) / sizeof(command_entries[0]);
@@ -157,7 +159,6 @@ bool ce_free(CeApp_t* app){
 CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, CeRune_t key){
      action->verb.function = &custom_vim_verb_substitute;
      action->repeatable = true;
-     action->visual_block_applies = true;
      return CE_VIM_PARSE_IN_PROGRESS;
 }
 
@@ -254,6 +255,31 @@ CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data){
      CeVimBufferData_t* vim_buffer_data = &buffer_data->vim;
      CePoint_t* destination = vim_buffer_data->marks + ce_vim_yank_register_index(' ');
      view->cursor = *destination;
+
+     return CE_COMMAND_SUCCESS;
+}
+
+CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data){
+     if(command->arg_count != 0) return CE_COMMAND_PRINT_HELP;
+
+     CeApp_t* app = (CeApp_t*)(user_data);
+     CeView_t* view = NULL;
+     CeLayout_t* tab_layout = NULL;
+
+     if(!app->last_terminal){
+          ce_log("error in terminal command: no terminal available\n");
+          return CE_COMMAND_FAILURE;
+     }
+
+     if(!get_layout_and_view(app, &view, &tab_layout)) return CE_COMMAND_NO_ACTION;
+
+     CeRange_t range = ce_vim_find_little_word_boundaries(view->buffer, view->cursor); // returns -1
+     char* word = ce_buffer_dupe_string(view->buffer, range.start, (range.end.x - range.start.x) + 1);
+     if(!word) return CE_COMMAND_NO_ACTION;
+     char cmd[128];
+     snprintf(cmd, 128, "fgrep -n %s *", word);
+     free(word);
+     ce_run_command_in_terminal(app->last_terminal, cmd);
 
      return CE_COMMAND_SUCCESS;
 }
