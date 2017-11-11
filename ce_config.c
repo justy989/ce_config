@@ -67,8 +67,6 @@ bool ce_init(CeApp_t* app){
                {{9}, "jump_list previous"}, // ctrl + o
                {{15}, "jump_list next"}, // ctrl + i
                // {{5}, ""}, // ctrl + e
-               {{'\\', 's', 'f'}, "slide_arg forward"},
-               {{'\\', 's', 'b'}, "slide_arg backward"},
                {{'\\', 'b'}, "terminal_command ./build"},
                {{'\\', 'c'}, "terminal_command ./clean"},
                {{'\\', 'g'}, "terminal_command ./game"},
@@ -78,6 +76,8 @@ bool ce_init(CeApp_t* app){
                {{KEY_BACKSPACE}, "hot_mark_goto"},
                {{'\\', 't'}, "new_terminal"},
                {{'\\', 'w'}, "grep_word_under_cursor"},
+               {{'\\', 's'}, "cscope_symbol_under_cursor"},
+               {{'\\', 'a'}, "cscope_caller_under_cursor"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
@@ -270,11 +270,6 @@ CeCommandStatus_t run_command_on_word_under_cursor(CeCommand_t* command, void* u
      CeView_t* view = NULL;
      CeLayout_t* tab_layout = NULL;
 
-     if(!app->last_terminal){
-          ce_log("error in terminal command: no terminal available\n");
-          return CE_COMMAND_FAILURE;
-     }
-
      if(!get_layout_and_view(app, &view, &tab_layout)) return CE_COMMAND_NO_ACTION;
 
      CeRange_t range = ce_vim_find_little_word_boundaries(view->buffer, view->cursor); // returns -1
@@ -283,6 +278,7 @@ CeCommandStatus_t run_command_on_word_under_cursor(CeCommand_t* command, void* u
      char cmd[128];
      snprintf(cmd, 128, format_string, word);
      free(word);
+     ce_switch_to_terminal(app, view, tab_layout);
      ce_run_command_in_terminal(app->last_terminal, cmd);
 
      return CE_COMMAND_SUCCESS;
