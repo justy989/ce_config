@@ -170,7 +170,7 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
                                 CeVimBufferData_t* buffer_data, const CeConfigOptions_t* config_options){
      char reg = action->verb.character;
      if(reg == 0) reg = '"';
-     CeVimYank_t* yank = vim->yanks + ce_vim_yank_register_index(reg);
+     CeVimYank_t* yank = vim->yanks + ce_vim_register_index(reg);
      if(!yank->text) return false;
 
      ce_range_sort(&motion_range);
@@ -240,7 +240,7 @@ CeCommandStatus_t command_hot_mark_set(CeCommand_t* command, void* user_data){
 
      CeAppBufferData_t* buffer_data = view->buffer->app_data;
      CeVimBufferData_t* vim_buffer_data = &buffer_data->vim;
-     CePoint_t* destination = vim_buffer_data->marks + ce_vim_yank_register_index(' ');
+     CePoint_t* destination = vim_buffer_data->marks + ce_vim_register_index(' ');
      *destination = view->cursor;
 
      return CE_COMMAND_SUCCESS;
@@ -257,7 +257,7 @@ CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data){
 
      CeAppBufferData_t* buffer_data = view->buffer->app_data;
      CeVimBufferData_t* vim_buffer_data = &buffer_data->vim;
-     CePoint_t* destination = vim_buffer_data->marks + ce_vim_yank_register_index(' ');
+     CePoint_t* destination = vim_buffer_data->marks + ce_vim_register_index(' ');
      view->cursor = *destination;
 
      return CE_COMMAND_SUCCESS;
@@ -278,9 +278,19 @@ CeCommandStatus_t run_command_on_word_under_cursor(CeCommand_t* command, void* u
      char cmd[128];
      snprintf(cmd, 128, format_string, word);
      free(word);
-     ce_switch_to_terminal(app, view, tab_layout);
-     ce_run_command_in_terminal(app->last_terminal, cmd);
+     if(app->last_terminal){
+          CeLayout_t* terminal_layout = ce_layout_buffer_in_view(tab_layout, app->last_terminal->buffer);
+          if(terminal_layout){
+               terminal_layout->view.cursor.x = app->last_terminal->cursor.x;
+               terminal_layout->view.cursor.y = app->last_terminal->cursor.y;
+               terminal_layout->view.scroll.y = app->last_terminal->cursor.y + app->last_terminal->start_line;
+               terminal_layout->view.scroll.x = 0;
+          }
+     }else{
+          ce_switch_to_terminal(app, view, tab_layout);
+     }
 
+     ce_run_command_in_terminal(app->last_terminal, cmd);
      return CE_COMMAND_SUCCESS;
 }
 
