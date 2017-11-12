@@ -31,6 +31,7 @@ bool ce_init(CeApp_t* app){
           config_options->insert_spaces_on_tab = true;
           config_options->terminal_scroll_back = 1024; // I use this for urxvt and don't seem to have any problems
           config_options->line_number = CE_LINE_NUMBER_NONE;
+          config_options->completion_line_limit = 15;
      }
 
      // keybinds
