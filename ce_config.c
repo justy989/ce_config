@@ -32,6 +32,7 @@ bool ce_init(CeApp_t* app){
           config_options->terminal_scroll_back = 1024; // I use this for urxvt and don't seem to have any problems
           config_options->line_number = CE_LINE_NUMBER_NONE;
           config_options->completion_line_limit = 15;
+          config_options->message_display_time_usec = 5000000; // 5 seconds
      }
 
      // keybinds
@@ -134,6 +135,8 @@ bool ce_init(CeApp_t* app){
 
           app->config_options.ui_fg_color = COLOR_DEFAULT;
           app->config_options.ui_bg_color = COLOR_BRIGHT_BLACK;
+          app->config_options.message_fg_color = COLOR_RED;
+          app->config_options.message_bg_color = COLOR_BRIGHT_BLACK;
 
           app->syntax_defs = config->syntax_defs;
      }
