@@ -38,48 +38,48 @@ bool ce_init(CeApp_t* app){
      // keybinds
      {
           CeKeyBindDef_t normal_mode_bind_defs[] = {
-               {{'\\', 'q'}, "quit"},
-               {{8}, "select_adjacent_layout left"}, // ctrl h
-               {{12}, "select_adjacent_layout right"}, // ctrl l
-               {{11}, "select_adjacent_layout up"}, // ctrl k
-               {{10}, "select_adjacent_layout down"}, // ctrl j
-               {{23}, "save_buffer"}, // ctrl w
-               {{'g', 'b'}, "show_buffers"},
-               {{22}, "split_layout horizontal"}, // ctrl v
-               {{19}, "split_layout vertical"}, // ctrl s
-               {{1}, "select_parent_layout"}, // ctrl a
-               {{14}, "goto_next_destination"}, // ctrl n
-               {{16}, "goto_prev_destination"}, // ctrl p
-               {{KEY_CLOSE}, "delete_layout"}, // ctrl q
-               {{6}, "load_file"}, // ctrl f
-               {{20}, "new_tab"}, // ctrl t
-               {{'/'}, "search forward"},
-               {{'?'}, "search backward"},
-               {{':'}, "command"},
-               {{'g', 't'}, "select_adjacent_tab right"},
-               {{'g', 'T'}, "select_adjacent_tab left"},
-               {{'\\', '/'}, "regex_search forward"},
-               {{'\\', '?'}, "regex_search backward"},
-               {{'"', '?'}, "show_yanks"},
-               {{'g', 'r'}, "redraw"},
-               {{'\\', 'f'}, "reload_file"},
-               {{24}, "switch_to_terminal"}, // ctrl x
-               {{2}, "switch_buffer"}, // ctrl b
-               {{343}, "goto_destination_in_line"}, // return
-               {{9}, "jump_list previous"}, // ctrl + o
-               {{15}, "jump_list next"}, // ctrl + i
-               // {{5}, ""}, // ctrl + e
-               {{'\\', 'b'}, "terminal_command ./build"},
-               {{'\\', 'c'}, "terminal_command ./clean"},
-               {{'\\', 'g'}, "terminal_command ./game"},
-               {{'\\', 'r'}, "replace_all"},
-               {{'K'}, "man_page_on_word_under_cursor"},
-               {{' '}, "hot_mark_set"},
-               {{KEY_BACKSPACE}, "hot_mark_goto"},
-               {{'\\', 't'}, "new_terminal"},
-               {{'\\', 'w'}, "grep_word_under_cursor"},
-               {{'\\', 's'}, "cscope_symbol_under_cursor"},
-               {{'\\', 'a'}, "cscope_caller_under_cursor"},
+               {{'\\', 'q'},        "quit"},
+               {{ce_ctrl_key('h')}, "select_adjacent_layout left"},
+               {{ce_ctrl_key('l')}, "select_adjacent_layout right"},
+               {{ce_ctrl_key('k')}, "select_adjacent_layout up"},
+               {{ce_ctrl_key('j')}, "select_adjacent_layout down"},
+               {{ce_ctrl_key('w')}, "save_buffer"},
+               {{'g', 'b'},         "show_buffers"},
+               {{ce_ctrl_key('v')}, "split_layout horizontal"},
+               {{ce_ctrl_key('s')}, "split_layout vertical"},
+               {{ce_ctrl_key('a')}, "select_parent_layout"},
+               {{ce_ctrl_key('n')}, "goto_next_destination"},
+               {{ce_ctrl_key('p')}, "goto_prev_destination"},
+               {{KEY_CLOSE},        "delete_layout"},
+               {{ce_ctrl_key('f')}, "load_file"},
+               {{ce_ctrl_key('t')}, "new_tab"},
+               {{'/'},              "search forward"},
+               {{'?'},              "search backward"},
+               {{':'},              "command"},
+               {{'g', 't'},         "select_adjacent_tab right"},
+               {{'g', 'T'},         "select_adjacent_tab left"},
+               {{'\\', '/'},        "regex_search forward"},
+               {{'\\', '?'},        "regex_search backward"},
+               {{'"', '?'},         "show_yanks"},
+               {{'g', 'r'},         "redraw"},
+               {{'\\', 'f'},        "reload_file"},
+               {{ce_ctrl_key('x')}, "switch_to_terminal"},
+               {{ce_ctrl_key('b')}, "switch_buffer"},
+               {{343},              "goto_destination_in_line"},
+               {{ce_ctrl_key('o')}, "jump_list previous"},
+               {{ce_ctrl_key('i')}, "jump_list next"},
+               // {{ce_ctrl_key('e')},          ""},
+               {{'\\', 'b'},        "terminal_command ./build"},
+               {{'\\', 'c'},        "terminal_command ./clean"},
+               {{'\\', 'g'},        "terminal_command ./game"},
+               {{'\\', 'r'},        "replace_all"},
+               {{'K'},              "man_page_on_word_under_cursor"},
+               {{' '},              "hot_mark_set"},
+               {{KEY_BACKSPACE},    "hot_mark_goto"},
+               {{'\\', 't'},        "new_terminal"},
+               {{'\\', 'w'},        "grep_word_under_cursor"},
+               {{'\\', 's'},        "cscope_symbol_under_cursor"},
+               {{'\\', 'a'},        "cscope_caller_under_cursor"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
