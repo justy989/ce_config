@@ -34,6 +34,9 @@ bool ce_init(CeApp_t* app){
           config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
           config_options->completion_line_limit = 15;
           config_options->message_display_time_usec = 5000000; // 5 seconds
+          config_options->apply_completion_key = CE_TAB;
+          config_options->cycle_next_completion_key = ce_ctrl_key('n');
+          config_options->cycle_prev_completion_key = ce_ctrl_key('p');
      }
 
      // keybinds
@@ -67,8 +70,8 @@ bool ce_init(CeApp_t* app){
                {{ce_ctrl_key('x')}, "switch_to_terminal"},
                {{ce_ctrl_key('b')}, "switch_buffer"},
                {{343},              "goto_destination_in_line"},
-               {{ce_ctrl_key('o')}, "jump_list previous"},
-               {{ce_ctrl_key('i')}, "jump_list next"},
+               {{ce_ctrl_key('i')}, "jump_list previous"},
+               {{ce_ctrl_key('o')}, "jump_list next"},
                // {{ce_ctrl_key('e')},          ""},
                {{'\\', 'b'},        "terminal_command ./build"},
                {{'\\', 'c'},        "terminal_command ./clean"},
@@ -224,7 +227,7 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
 bool get_layout_and_view(CeApp_t* app, CeView_t** view, CeLayout_t** tab_layout){
      *tab_layout = app->tab_list_layout->tab_list.current;
 
-     if(app->input_mode) return false;
+     if(app->input_complete_func) return false;
 
      if((*tab_layout)->tab.current->type == CE_LAYOUT_TYPE_VIEW){
           *view = &(*tab_layout)->tab.current->view;
