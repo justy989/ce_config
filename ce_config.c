@@ -8,7 +8,7 @@ typedef struct{
      CeSyntaxDef_t syntax_defs[CE_SYNTAX_COLOR_COUNT];
 }Config_t;
 
-CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, CeRune_t key);
+CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, const CeVim_t* vim, CeRune_t key);
 bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
                                 CeVimBufferData_t* buffer_data, const CeConfigOptions_t* config_options);
 
@@ -72,7 +72,7 @@ bool ce_init(CeApp_t* app){
                {{343},              "goto_destination_in_line"},
                {{ce_ctrl_key('o')}, "jump_list previous"},
                {{ce_ctrl_key('i')}, "jump_list next"},
-               // {{ce_ctrl_key('e')},          ""},
+               // {{ce_ctrl_key('e')}, ""},
                {{'\\', 'b'},        "terminal_command ./build"},
                {{'\\', 'c'},        "terminal_command ./clean"},
                {{'\\', 'g'},        "terminal_command ./game"},
@@ -168,7 +168,7 @@ bool ce_free(CeApp_t* app){
      return true;
 }
 
-CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, CeRune_t key){
+CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, const CeVim_t* vim, CeRune_t key){
      action->verb.function = &custom_vim_verb_substitute;
      action->repeatable = true;
      return CE_VIM_PARSE_IN_PROGRESS;
