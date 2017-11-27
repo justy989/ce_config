@@ -31,7 +31,8 @@ bool ce_init(CeApp_t* app){
           config_options->insert_spaces_on_tab = true;
           config_options->terminal_scroll_back = 1024; // I use this for urxvt and don't seem to have any problems
           config_options->line_number = CE_LINE_NUMBER_NONE;
-          config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
+          // config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
+          config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_FULL_LINE;
           config_options->completion_line_limit = 15;
           config_options->message_display_time_usec = 5000000; // 5 seconds
           config_options->apply_completion_key = CE_TAB;
@@ -73,9 +74,9 @@ bool ce_init(CeApp_t* app){
                {{ce_ctrl_key('o')}, "jump_list previous"},
                {{ce_ctrl_key('i')}, "jump_list next"},
                // {{ce_ctrl_key('e')}, ""},
-               {{'\\', 'b'},        "terminal_command ./build"},
-               {{'\\', 'c'},        "terminal_command ./clean"},
-               {{'\\', 'g'},        "terminal_command ./game"},
+               {{'\\', 'b'},        "shell_command ./build"},
+               {{'\\', 'c'},        "shell_command ./clean"},
+               {{'\\', 'g'},        "shell_command ./game"},
                {{'\\', 'r'},        "replace_all"},
                {{'K'},              "man_page_on_word_under_cursor"},
                {{' '},              "hot_mark_set"},
@@ -286,19 +287,8 @@ CeCommandStatus_t run_command_on_word_under_cursor(CeCommand_t* command, void* u
      char cmd[128];
      snprintf(cmd, 128, format_string, word);
      free(word);
-     if(app->last_terminal){
-          CeLayout_t* terminal_layout = ce_layout_buffer_in_view(tab_layout, app->last_terminal->buffer);
-          if(terminal_layout){
-               terminal_layout->view.cursor.x = app->last_terminal->cursor.x;
-               terminal_layout->view.cursor.y = app->last_terminal->cursor.y;
-               terminal_layout->view.scroll.y = app->last_terminal->cursor.y + app->last_terminal->start_line;
-               terminal_layout->view.scroll.x = 0;
-          }
-     }else{
-          ce_switch_to_terminal(app, view, tab_layout);
-     }
 
-     ce_run_command_in_terminal(app->last_terminal, cmd);
+     ce_app_run_shell_command(app, cmd, tab_layout, view);
      return CE_COMMAND_SUCCESS;
 }
 
