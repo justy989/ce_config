@@ -31,8 +31,7 @@ bool ce_init(CeApp_t* app){
           config_options->insert_spaces_on_tab = true;
           config_options->terminal_scroll_back = 1024; // I use this for urxvt and don't seem to have any problems
           config_options->line_number = CE_LINE_NUMBER_NONE;
-          // config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
-          config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_FULL_LINE;
+          config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
           config_options->completion_line_limit = 15;
           config_options->message_display_time_usec = 5000000; // 5 seconds
           config_options->apply_completion_key = CE_TAB;
