@@ -10,7 +10,8 @@ typedef struct{
 
 CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, const CeVim_t* vim, CeRune_t key);
 bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
-                                CeVimBufferData_t* buffer_data, const CeConfigOptions_t* config_options);
+                                CePoint_t* cursor, CeVimVisualData_t* visual, CeVimBufferData_t* buffer_data,
+                                const CeConfigOptions_t* config_options);
 
 CeCommandStatus_t command_hot_mark_set(CeCommand_t* command, void* user_data);
 CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data);
@@ -84,6 +85,9 @@ bool ce_init(CeApp_t* app){
                {{'\\', 'w'},        "grep_word_under_cursor"},
                {{'\\', 's'},        "cscope_symbol_under_cursor"},
                {{'\\', 'a'},        "cscope_caller_under_cursor"},
+               {{'\\', 'm'},        "add_cursor"},
+               {{'\\', 'n'},        "clear_cursors"},
+               {{'\\', 'l'},        "toggle_cursors_active"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
@@ -136,6 +140,10 @@ bool ce_init(CeApp_t* app){
           config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_MATCH].bg = CE_SYNTAX_USE_CURRENT_COLOR;
           config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].fg = COLOR_WHITE;
           config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].bg = COLOR_DEFAULT;
+          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_INACTIVE].fg = COLOR_DEFAULT;
+          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_INACTIVE].bg = COLOR_RED;
+          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_ACTIVE].fg = CE_SYNTAX_USE_CURRENT_COLOR;
+          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_ACTIVE].bg = COLOR_GREEN;
 
           app->config_options.ui_fg_color = COLOR_DEFAULT;
           app->config_options.ui_bg_color = COLOR_BRIGHT_BLACK;
@@ -175,7 +183,8 @@ CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, const
 }
 
 bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
-                                CeVimBufferData_t* buffer_data, const CeConfigOptions_t* config_options){
+                                CePoint_t* cursor, CeVimVisualData_t* visual, CeVimBufferData_t* buffer_data,
+                                const CeConfigOptions_t* config_options){
      char reg = action->verb.character;
      if(reg == 0) reg = '"';
      CeVimYank_t* yank = vim->yanks + ce_vim_register_index(reg);
