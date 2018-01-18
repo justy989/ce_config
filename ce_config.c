@@ -275,7 +275,7 @@ CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data){
      CeAppBufferData_t* buffer_data = view->buffer->app_data;
      CeVimBufferData_t* vim_buffer_data = &buffer_data->vim;
      CePoint_t* destination = vim_buffer_data->marks + ce_vim_register_index(' ');
-     view->cursor = *destination;
+     if(destination->x || destination->y) view->cursor = *destination;
 
      return CE_COMMAND_SUCCESS;
 }
