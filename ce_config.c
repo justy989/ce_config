@@ -30,7 +30,6 @@ bool ce_init(CeApp_t* app){
           config_options->horizontal_scroll_off = 10;
           config_options->vertical_scroll_off = 5;
           config_options->insert_spaces_on_tab = true;
-          config_options->terminal_scroll_back = 1024; // I use this for urxvt and don't seem to have any problems
           config_options->line_number = CE_LINE_NUMBER_NONE;
           config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
           config_options->completion_line_limit = 15;
@@ -68,7 +67,6 @@ bool ce_init(CeApp_t* app){
                {{'"', '?'},         "show_yanks"},
                {{'g', 'r'},         "redraw"},
                {{'\\', 'f'},        "reload_file"},
-               {{ce_ctrl_key('x')}, "switch_to_terminal"},
                {{ce_ctrl_key('b')}, "switch_buffer"},
                {{343},              "goto_destination_in_line"},
                {{ce_ctrl_key('o')}, "jump_list previous"},
@@ -81,13 +79,13 @@ bool ce_init(CeApp_t* app){
                {{'K'},              "man_page_on_word_under_cursor"},
                {{' '},              "hot_mark_set"},
                {{KEY_BACKSPACE},    "hot_mark_goto"},
-               {{'\\', 't'},        "new_terminal"},
                {{'\\', 'w'},        "grep_word_under_cursor"},
                {{'\\', 's'},        "cscope_symbol_under_cursor"},
                {{'\\', 'a'},        "cscope_caller_under_cursor"},
                {{'\\', 'm'},        "add_cursor"},
                {{'\\', 'n'},        "clear_cursors"},
                {{'\\', 'l'},        "toggle_cursors_active"},
+               {{268},              "shell_command make"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
