@@ -26,7 +26,7 @@ bool ce_init(CeApp_t* app){
      // config options
      {
           CeConfigOptions_t* config_options = &app->config_options;
-          config_options->tab_width = 5;
+          config_options->tab_width = 4;
           config_options->horizontal_scroll_off = 10;
           config_options->vertical_scroll_off = 5;
           config_options->insert_spaces_on_tab = true;
@@ -66,7 +66,6 @@ bool ce_init(CeApp_t* app){
                {{'\\', '?'},        "regex_search backward"},
                {{'"', '?'},         "show_yanks"},
                {{'g', 'r'},         "redraw"},
-               {{'\\', 'f'},        "reload_file"},
                {{ce_ctrl_key('b')}, "switch_buffer"},
                {{343},              "goto_destination_in_line"},
                {{ce_ctrl_key('o')}, "jump_list previous"},
@@ -85,6 +84,7 @@ bool ce_init(CeApp_t* app){
                {{'\\', 'm'},        "add_cursor"},
                {{'\\', 'n'},        "clear_cursors"},
                {{'\\', 'l'},        "toggle_cursors_active"},
+               {{'\\', 'f'},        "load_cached_files"},
                {{268},              "shell_command make"},
           };
 
