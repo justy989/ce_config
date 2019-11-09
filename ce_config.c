@@ -55,6 +55,14 @@ bool ce_init(CeApp_t* app){
                {{ce_ctrl_key('n')}, "goto_next_destination"},
                {{ce_ctrl_key('p')}, "goto_prev_destination"},
                {{KEY_CLOSE},        "delete_layout"},
+               {{KEY_LEFT},         "resize_layout expand left 1"},
+               {{393},              "resize_layout shrink right 1"},
+               {{KEY_RIGHT},        "resize_layout expand right 1"},
+               {{402},              "resize_layout shrink left 1"},
+               {{KEY_UP},           "resize_layout expand up 1"},
+               {{337},              "resize_layout shrink down 1"},
+               {{KEY_DOWN},         "resize_layout expand down 1"},
+               {{336},              "resize_layout shrink up 1"},
                {{ce_ctrl_key('f')}, "load_file"},
                {{ce_ctrl_key('t')}, "new_tab"},
                {{'/'},              "search forward"},
@@ -294,7 +302,7 @@ CeCommandStatus_t run_command_on_word_under_cursor(CeCommand_t* command, void* u
      snprintf(cmd, 128, format_string, word);
      free(word);
 
-     ce_app_run_shell_command(app, cmd, tab_layout, view);
+     ce_app_run_shell_command(app, cmd, tab_layout, view, true);
      return CE_COMMAND_SUCCESS;
 }
 
