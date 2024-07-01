@@ -3,11 +3,26 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <ncurses.h>
+
+#if defined(DISPLAY_GUI)
+    #include "ce/ce_draw_gui.h"
+#elif defined(DISPLAY_TERM)
+    #include <ncurses.h>
+#endif
 
 typedef struct{
      CeSyntaxDef_t syntax_defs[CE_SYNTAX_COLOR_COUNT];
 }Config_t;
+
+#if defined(PLATFORM_WINDOWS)
+__declspec( dllimport )
+#endif
+bool ce_init(CeApp_t* app);
+
+#if defined(PLATFORM_WINDOWS)
+__declspec( dllimport )
+#endif
+bool ce_free(CeApp_t* app);
 
 CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, const CeVim_t* vim, CeRune_t key);
 bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
@@ -116,7 +131,11 @@ bool ce_init(CeApp_t* app){
           config_options->gui_window_height = 1024;
           config_options->gui_font_size = 16;
           config_options->gui_font_line_separation = 1;
-          strncpy(config_options->gui_font_path, "/home/jtiff/font/Inconsolata-SemiBold.ttf", PATH_MAX);
+#if defined(PLATFORM_WINDOWS)
+          strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
+#else
+          strncpy(config_options->gui_font_path, "/home/jtiff/font/Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
+#endif
      }
 
      // keybinds
