@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
 CE_SOURCES=($(ls ce/*.c | grep -v test))
-#FLAGS='-shared -Wall -Werror -Wshadow -Wextra -Wno-unused-parameter -std=gnu11 -ggdb3 -fpic -rdynamic -DDISPLAY_TERMINAL'
-FLAGS='-shared -Wall -Werror -Wshadow -Wextra -Wno-unused-parameter -std=gnu11 -ggdb3 -DDISPLAY_TERMINAL' # for cygwin, annoyingly
+FLAGS='-shared -Wall -Werror -Wshadow -Wextra -Wno-unused-parameter -std=gnu11 -ggdb3 -fpic -rdynamic -DDISPLAY_TERMINAL'
+#FLAGS='-shared -Wall -Werror -Wshadow -Wextra -Wno-unused-parameter -std=gnu11 -ggdb3 -DDISPLAY_TERMINAL' # for cygwin, annoyingly
 SHARED_OBJ='ce_config_term.so'
 LINK='-lncursesw'
 clang $FLAGS ${CE_SOURCES[*]} ce_config.c $LINK -o $SHARED_OBJ
