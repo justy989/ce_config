@@ -1,4 +1,5 @@
 #include "ce/ce_app.h"
+#include "ce/ce_key_defines.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -30,19 +31,99 @@ bool ce_init(CeApp_t* app){
           config_options->horizontal_scroll_off = 10;
           config_options->vertical_scroll_off = 5;
           config_options->insert_spaces_on_tab = true;
-          config_options->line_number = CE_LINE_NUMBER_NONE;
+          config_options->line_number = CE_LINE_NUMBER_ABSOLUTE;
           config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
           config_options->completion_line_limit = 15;
           config_options->message_display_time_usec = 5000000; // 5 seconds
           config_options->apply_completion_key = CE_TAB;
           config_options->cycle_next_completion_key = ce_ctrl_key('n');
           config_options->cycle_prev_completion_key = ce_ctrl_key('p');
+
+          config_options->color_defs[COLOR_BLACK].red = 32;
+          config_options->color_defs[COLOR_BLACK].green = 32;
+          config_options->color_defs[COLOR_BLACK].blue = 32;
+
+          config_options->color_defs[COLOR_RED].red = 137;
+          config_options->color_defs[COLOR_RED].green = 56;
+          config_options->color_defs[COLOR_RED].blue = 56;
+
+          config_options->color_defs[COLOR_GREEN].red = 69;
+          config_options->color_defs[COLOR_GREEN].green = 123;
+          config_options->color_defs[COLOR_GREEN].blue = 77;
+
+          config_options->color_defs[COLOR_YELLOW].red = 150;
+          config_options->color_defs[COLOR_YELLOW].green = 111;
+          config_options->color_defs[COLOR_YELLOW].blue = 78;
+
+          config_options->color_defs[COLOR_BLUE].red = 70;
+          config_options->color_defs[COLOR_BLUE].green = 107;
+          config_options->color_defs[COLOR_BLUE].blue = 138;
+
+          config_options->color_defs[COLOR_MAGENTA].red = 116;
+          config_options->color_defs[COLOR_MAGENTA].green = 90;
+          config_options->color_defs[COLOR_MAGENTA].blue = 160;
+
+          config_options->color_defs[COLOR_CYAN].red = 55;
+          config_options->color_defs[COLOR_CYAN].green = 125;
+          config_options->color_defs[COLOR_CYAN].blue = 108;
+
+          config_options->color_defs[COLOR_WHITE].red = 42;
+          config_options->color_defs[COLOR_WHITE].green = 42;
+          config_options->color_defs[COLOR_WHITE].blue = 42;
+
+          config_options->color_defs[COLOR_BRIGHT_BLACK].red = 36;
+          config_options->color_defs[COLOR_BRIGHT_BLACK].green = 36;
+          config_options->color_defs[COLOR_BRIGHT_BLACK].blue = 36;
+
+          config_options->color_defs[COLOR_BRIGHT_RED].red = 157;
+          config_options->color_defs[COLOR_BRIGHT_RED].green = 110;
+          config_options->color_defs[COLOR_BRIGHT_RED].blue = 127;
+
+          config_options->color_defs[COLOR_BRIGHT_GREEN].red = 110;
+          config_options->color_defs[COLOR_BRIGHT_GREEN].green = 137;
+          config_options->color_defs[COLOR_BRIGHT_GREEN].blue = 106;
+
+          config_options->color_defs[COLOR_BRIGHT_YELLOW].red = 156;
+          config_options->color_defs[COLOR_BRIGHT_YELLOW].green = 148;
+          config_options->color_defs[COLOR_BRIGHT_YELLOW].blue = 95;
+
+          config_options->color_defs[COLOR_BRIGHT_BLUE].red = 114;
+          config_options->color_defs[COLOR_BRIGHT_BLUE].green = 151;
+          config_options->color_defs[COLOR_BRIGHT_BLUE].blue = 179;
+
+          config_options->color_defs[COLOR_BRIGHT_MAGENTA].red = 147;
+          config_options->color_defs[COLOR_BRIGHT_MAGENTA].green = 108;
+          config_options->color_defs[COLOR_BRIGHT_MAGENTA].blue = 151;
+
+          config_options->color_defs[COLOR_BRIGHT_CYAN].red = 124;
+          config_options->color_defs[COLOR_BRIGHT_CYAN].green = 166;
+          config_options->color_defs[COLOR_BRIGHT_CYAN].blue = 145;
+
+          config_options->color_defs[COLOR_BRIGHT_WHITE].red = 255;
+          config_options->color_defs[COLOR_BRIGHT_WHITE].green = 255;
+          config_options->color_defs[COLOR_BRIGHT_WHITE].blue = 255;
+
+          config_options->color_defs[COLOR_FOREGROUND].red = 218;
+          config_options->color_defs[COLOR_FOREGROUND].green = 218;
+          config_options->color_defs[COLOR_FOREGROUND].blue = 218;
+
+          config_options->color_defs[COLOR_BACKGROUND].red = 25;
+          config_options->color_defs[COLOR_BACKGROUND].green = 25;
+          config_options->color_defs[COLOR_BACKGROUND].blue = 25;
+
+          // GUI options
+          config_options->gui_window_width = 1980;
+          config_options->gui_window_height = 1024;
+          config_options->gui_font_size = 16;
+          config_options->gui_font_line_separation = 1;
+          strncpy(config_options->gui_font_path, "/home/jtiff/font/Inconsolata-SemiBold.ttf", PATH_MAX);
      }
 
      // keybinds
      {
           CeKeyBindDef_t normal_mode_bind_defs[] = {
                {{'\\', 'q'},        "quit"},
+               {{ce_ctrl_key('V')}, "paste_clipboard"},
                {{ce_ctrl_key('h')}, "select_adjacent_layout left"},
                {{ce_ctrl_key('l')}, "select_adjacent_layout right"},
                {{ce_ctrl_key('k')}, "select_adjacent_layout up"},
@@ -54,14 +135,15 @@ bool ce_init(CeApp_t* app){
                {{ce_ctrl_key('a')}, "select_parent_layout"},
                {{ce_ctrl_key('n')}, "goto_next_destination"},
                {{ce_ctrl_key('p')}, "goto_prev_destination"},
+               {{ce_ctrl_key('q')}, "delete_layout"},
                {{KEY_CLOSE},        "delete_layout"},
-               {{KEY_LEFT},         "resize_layout expand left 1"},
+               {{KEY_LEFT_ARROW},   "resize_layout expand left 1"},
                {{393},              "resize_layout shrink right 1"},
-               {{KEY_RIGHT},        "resize_layout expand right 1"},
+               {{KEY_RIGHT_ARROW},  "resize_layout expand right 1"},
                {{402},              "resize_layout shrink left 1"},
-               {{KEY_UP},           "resize_layout expand up 1"},
+               {{KEY_UP_ARROW},     "resize_layout expand up 1"},
                {{337},              "resize_layout shrink down 1"},
-               {{KEY_DOWN},         "resize_layout expand down 1"},
+               {{KEY_DOWN_ARROW},   "resize_layout expand down 1"},
                {{336},              "resize_layout shrink up 1"},
                {{ce_ctrl_key('f')}, "load_file"},
                {{ce_ctrl_key('t')}, "new_tab"},
@@ -85,15 +167,14 @@ bool ce_init(CeApp_t* app){
                {{'\\', 'r'},        "replace_all"},
                {{'K'},              "man_page_on_word_under_cursor"},
                {{' '},              "hot_mark_set"},
-               {{KEY_BACKSPACE},    "hot_mark_goto"},
+               {{KEY_ONLY_BACKSPACE},"hot_mark_goto"},
                {{'\\', 'w'},        "grep_word_under_cursor"},
                {{'\\', 's'},        "cscope_symbol_under_cursor"},
                {{'\\', 'a'},        "cscope_caller_under_cursor"},
-               {{'\\', 'm'},        "add_cursor"},
-               {{'\\', 'n'},        "clear_cursors"},
-               {{'\\', 'l'},        "toggle_cursors_active"},
                {{'\\', 'f'},        "load_cached_files"},
                {{268},              "shell_command make"},
+               {{'\\', '-'},        "font_adjust_size -2"},
+               {{'\\', '+'},        "font_adjust_size +2"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
