@@ -54,77 +54,77 @@ bool ce_init(CeApp_t* app){
           config_options->cycle_next_completion_key = ce_ctrl_key('n');
           config_options->cycle_prev_completion_key = ce_ctrl_key('p');
 
-          config_options->color_defs[COLOR_BLACK].red = 32;
-          config_options->color_defs[COLOR_BLACK].green = 32;
-          config_options->color_defs[COLOR_BLACK].blue = 32;
+          config_options->color_defs[CE_COLOR_BLACK].red = 32;
+          config_options->color_defs[CE_COLOR_BLACK].green = 32;
+          config_options->color_defs[CE_COLOR_BLACK].blue = 32;
 
-          config_options->color_defs[COLOR_RED].red = 137;
-          config_options->color_defs[COLOR_RED].green = 56;
-          config_options->color_defs[COLOR_RED].blue = 56;
+          config_options->color_defs[CE_COLOR_RED].red = 137;
+          config_options->color_defs[CE_COLOR_RED].green = 56;
+          config_options->color_defs[CE_COLOR_RED].blue = 56;
 
-          config_options->color_defs[COLOR_GREEN].red = 69;
-          config_options->color_defs[COLOR_GREEN].green = 123;
-          config_options->color_defs[COLOR_GREEN].blue = 77;
+          config_options->color_defs[CE_COLOR_GREEN].red = 69;
+          config_options->color_defs[CE_COLOR_GREEN].green = 123;
+          config_options->color_defs[CE_COLOR_GREEN].blue = 77;
 
-          config_options->color_defs[COLOR_YELLOW].red = 150;
-          config_options->color_defs[COLOR_YELLOW].green = 111;
-          config_options->color_defs[COLOR_YELLOW].blue = 78;
+          config_options->color_defs[CE_COLOR_YELLOW].red = 150;
+          config_options->color_defs[CE_COLOR_YELLOW].green = 111;
+          config_options->color_defs[CE_COLOR_YELLOW].blue = 78;
 
-          config_options->color_defs[COLOR_BLUE].red = 70;
-          config_options->color_defs[COLOR_BLUE].green = 107;
-          config_options->color_defs[COLOR_BLUE].blue = 138;
+          config_options->color_defs[CE_COLOR_BLUE].red = 70;
+          config_options->color_defs[CE_COLOR_BLUE].green = 107;
+          config_options->color_defs[CE_COLOR_BLUE].blue = 138;
 
-          config_options->color_defs[COLOR_MAGENTA].red = 116;
-          config_options->color_defs[COLOR_MAGENTA].green = 90;
-          config_options->color_defs[COLOR_MAGENTA].blue = 160;
+          config_options->color_defs[CE_COLOR_MAGENTA].red = 116;
+          config_options->color_defs[CE_COLOR_MAGENTA].green = 90;
+          config_options->color_defs[CE_COLOR_MAGENTA].blue = 160;
 
-          config_options->color_defs[COLOR_CYAN].red = 55;
-          config_options->color_defs[COLOR_CYAN].green = 125;
-          config_options->color_defs[COLOR_CYAN].blue = 108;
+          config_options->color_defs[CE_COLOR_CYAN].red = 55;
+          config_options->color_defs[CE_COLOR_CYAN].green = 125;
+          config_options->color_defs[CE_COLOR_CYAN].blue = 108;
 
-          config_options->color_defs[COLOR_WHITE].red = 42;
-          config_options->color_defs[COLOR_WHITE].green = 42;
-          config_options->color_defs[COLOR_WHITE].blue = 42;
+          config_options->color_defs[CE_COLOR_WHITE].red = 42;
+          config_options->color_defs[CE_COLOR_WHITE].green = 42;
+          config_options->color_defs[CE_COLOR_WHITE].blue = 42;
 
-          config_options->color_defs[COLOR_BRIGHT_BLACK].red = 36;
-          config_options->color_defs[COLOR_BRIGHT_BLACK].green = 36;
-          config_options->color_defs[COLOR_BRIGHT_BLACK].blue = 36;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].red = 36;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].green = 36;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].blue = 36;
 
-          config_options->color_defs[COLOR_BRIGHT_RED].red = 157;
-          config_options->color_defs[COLOR_BRIGHT_RED].green = 110;
-          config_options->color_defs[COLOR_BRIGHT_RED].blue = 127;
+          config_options->color_defs[CE_COLOR_BRIGHT_RED].red = 157;
+          config_options->color_defs[CE_COLOR_BRIGHT_RED].green = 110;
+          config_options->color_defs[CE_COLOR_BRIGHT_RED].blue = 127;
 
-          config_options->color_defs[COLOR_BRIGHT_GREEN].red = 110;
-          config_options->color_defs[COLOR_BRIGHT_GREEN].green = 137;
-          config_options->color_defs[COLOR_BRIGHT_GREEN].blue = 106;
+          config_options->color_defs[CE_COLOR_BRIGHT_GREEN].red = 110;
+          config_options->color_defs[CE_COLOR_BRIGHT_GREEN].green = 137;
+          config_options->color_defs[CE_COLOR_BRIGHT_GREEN].blue = 106;
 
-          config_options->color_defs[COLOR_BRIGHT_YELLOW].red = 156;
-          config_options->color_defs[COLOR_BRIGHT_YELLOW].green = 148;
-          config_options->color_defs[COLOR_BRIGHT_YELLOW].blue = 95;
+          config_options->color_defs[CE_COLOR_BRIGHT_YELLOW].red = 156;
+          config_options->color_defs[CE_COLOR_BRIGHT_YELLOW].green = 148;
+          config_options->color_defs[CE_COLOR_BRIGHT_YELLOW].blue = 95;
 
-          config_options->color_defs[COLOR_BRIGHT_BLUE].red = 114;
-          config_options->color_defs[COLOR_BRIGHT_BLUE].green = 151;
-          config_options->color_defs[COLOR_BRIGHT_BLUE].blue = 179;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLUE].red = 114;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLUE].green = 151;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLUE].blue = 179;
 
-          config_options->color_defs[COLOR_BRIGHT_MAGENTA].red = 147;
-          config_options->color_defs[COLOR_BRIGHT_MAGENTA].green = 108;
-          config_options->color_defs[COLOR_BRIGHT_MAGENTA].blue = 151;
+          config_options->color_defs[CE_COLOR_BRIGHT_MAGENTA].red = 147;
+          config_options->color_defs[CE_COLOR_BRIGHT_MAGENTA].green = 108;
+          config_options->color_defs[CE_COLOR_BRIGHT_MAGENTA].blue = 151;
 
-          config_options->color_defs[COLOR_BRIGHT_CYAN].red = 124;
-          config_options->color_defs[COLOR_BRIGHT_CYAN].green = 166;
-          config_options->color_defs[COLOR_BRIGHT_CYAN].blue = 145;
+          config_options->color_defs[CE_COLOR_BRIGHT_CYAN].red = 124;
+          config_options->color_defs[CE_COLOR_BRIGHT_CYAN].green = 166;
+          config_options->color_defs[CE_COLOR_BRIGHT_CYAN].blue = 145;
 
-          config_options->color_defs[COLOR_BRIGHT_WHITE].red = 255;
-          config_options->color_defs[COLOR_BRIGHT_WHITE].green = 255;
-          config_options->color_defs[COLOR_BRIGHT_WHITE].blue = 255;
+          config_options->color_defs[CE_COLOR_BRIGHT_WHITE].red = 255;
+          config_options->color_defs[CE_COLOR_BRIGHT_WHITE].green = 255;
+          config_options->color_defs[CE_COLOR_BRIGHT_WHITE].blue = 255;
 
-          config_options->color_defs[COLOR_FOREGROUND].red = 218;
-          config_options->color_defs[COLOR_FOREGROUND].green = 218;
-          config_options->color_defs[COLOR_FOREGROUND].blue = 218;
+          config_options->color_defs[CE_COLOR_FOREGROUND].red = 218;
+          config_options->color_defs[CE_COLOR_FOREGROUND].green = 218;
+          config_options->color_defs[CE_COLOR_FOREGROUND].blue = 218;
 
-          config_options->color_defs[COLOR_BACKGROUND].red = 25;
-          config_options->color_defs[COLOR_BACKGROUND].green = 25;
-          config_options->color_defs[COLOR_BACKGROUND].blue = 25;
+          config_options->color_defs[CE_COLOR_BACKGROUND].red = 25;
+          config_options->color_defs[CE_COLOR_BACKGROUND].green = 25;
+          config_options->color_defs[CE_COLOR_BACKGROUND].blue = 25;
 
           // GUI options
           config_options->gui_window_width = 1980;
@@ -206,55 +206,55 @@ bool ce_init(CeApp_t* app){
 
      // syntax
      {
-          config->syntax_defs[CE_SYNTAX_COLOR_NORMAL].fg = COLOR_DEFAULT;
+          config->syntax_defs[CE_SYNTAX_COLOR_NORMAL].fg = CE_COLOR_DEFAULT;
           config->syntax_defs[CE_SYNTAX_COLOR_NORMAL].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_TYPE].fg = COLOR_BRIGHT_BLUE;
+          config->syntax_defs[CE_SYNTAX_COLOR_TYPE].fg = CE_COLOR_BRIGHT_BLUE;
           config->syntax_defs[CE_SYNTAX_COLOR_TYPE].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_KEYWORD].fg = COLOR_BLUE;
+          config->syntax_defs[CE_SYNTAX_COLOR_KEYWORD].fg = CE_COLOR_BLUE;
           config->syntax_defs[CE_SYNTAX_COLOR_KEYWORD].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_CONTROL].fg = COLOR_YELLOW;
+          config->syntax_defs[CE_SYNTAX_COLOR_CONTROL].fg = CE_COLOR_YELLOW;
           config->syntax_defs[CE_SYNTAX_COLOR_CONTROL].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_CAPS_VAR].fg = COLOR_MAGENTA;
+          config->syntax_defs[CE_SYNTAX_COLOR_CAPS_VAR].fg = CE_COLOR_MAGENTA;
           config->syntax_defs[CE_SYNTAX_COLOR_CAPS_VAR].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_COMMENT].fg = COLOR_GREEN;
+          config->syntax_defs[CE_SYNTAX_COLOR_COMMENT].fg = CE_COLOR_GREEN;
           config->syntax_defs[CE_SYNTAX_COLOR_COMMENT].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_STRING].fg = COLOR_RED;
+          config->syntax_defs[CE_SYNTAX_COLOR_STRING].fg = CE_COLOR_RED;
           config->syntax_defs[CE_SYNTAX_COLOR_STRING].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_CHAR_LITERAL].fg = COLOR_RED;
+          config->syntax_defs[CE_SYNTAX_COLOR_CHAR_LITERAL].fg = CE_COLOR_RED;
           config->syntax_defs[CE_SYNTAX_COLOR_CHAR_LITERAL].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_NUMBER_LITERAL].fg = COLOR_MAGENTA;
+          config->syntax_defs[CE_SYNTAX_COLOR_NUMBER_LITERAL].fg = CE_COLOR_MAGENTA;
           config->syntax_defs[CE_SYNTAX_COLOR_NUMBER_LITERAL].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_PREPROCESSOR].fg = COLOR_BRIGHT_MAGENTA;
+          config->syntax_defs[CE_SYNTAX_COLOR_PREPROCESSOR].fg = CE_COLOR_BRIGHT_MAGENTA;
           config->syntax_defs[CE_SYNTAX_COLOR_PREPROCESSOR].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_TRAILING_WHITESPACE].fg = COLOR_RED;
-          config->syntax_defs[CE_SYNTAX_COLOR_TRAILING_WHITESPACE].bg = COLOR_RED;
+          config->syntax_defs[CE_SYNTAX_COLOR_TRAILING_WHITESPACE].fg = CE_COLOR_RED;
+          config->syntax_defs[CE_SYNTAX_COLOR_TRAILING_WHITESPACE].bg = CE_COLOR_RED;
           config->syntax_defs[CE_SYNTAX_COLOR_VISUAL].fg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_VISUAL].bg = COLOR_WHITE;
+          config->syntax_defs[CE_SYNTAX_COLOR_VISUAL].bg = CE_COLOR_WHITE;
           config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].fg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].bg = COLOR_BLACK;
-          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_ADD].fg = COLOR_GREEN;
+          config->syntax_defs[CE_SYNTAX_COLOR_CURRENT_LINE].bg = CE_COLOR_BLACK;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_ADD].fg = CE_COLOR_GREEN;
           config->syntax_defs[CE_SYNTAX_COLOR_DIFF_ADD].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_REMOVE].fg = COLOR_RED;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_REMOVE].fg = CE_COLOR_RED;
           config->syntax_defs[CE_SYNTAX_COLOR_DIFF_REMOVE].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_HEADER].fg = COLOR_MAGENTA;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_HEADER].fg = CE_COLOR_MAGENTA;
           config->syntax_defs[CE_SYNTAX_COLOR_DIFF_HEADER].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_COMMENT].fg = COLOR_BLUE;
+          config->syntax_defs[CE_SYNTAX_COLOR_DIFF_COMMENT].fg = CE_COLOR_BLUE;
           config->syntax_defs[CE_SYNTAX_COLOR_DIFF_COMMENT].bg = CE_SYNTAX_USE_CURRENT_COLOR;
           config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_SELECTED].fg = CE_SYNTAX_USE_CURRENT_COLOR;;
-          config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_SELECTED].bg = COLOR_WHITE;
-          config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_MATCH].fg = COLOR_BRIGHT_CYAN;
+          config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_SELECTED].bg = CE_COLOR_WHITE;
+          config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_MATCH].fg = CE_COLOR_BRIGHT_CYAN;
           config->syntax_defs[CE_SYNTAX_COLOR_COMPLETE_MATCH].bg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].fg = COLOR_WHITE;
-          config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].bg = COLOR_DEFAULT;
-          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_INACTIVE].fg = COLOR_DEFAULT;
-          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_INACTIVE].bg = COLOR_RED;
+          config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].fg = CE_COLOR_WHITE;
+          config->syntax_defs[CE_SYNTAX_COLOR_LINE_NUMBER].bg = CE_COLOR_DEFAULT;
+          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_INACTIVE].fg = CE_COLOR_DEFAULT;
+          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_INACTIVE].bg = CE_COLOR_RED;
           config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_ACTIVE].fg = CE_SYNTAX_USE_CURRENT_COLOR;
-          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_ACTIVE].bg = COLOR_GREEN;
+          config->syntax_defs[CE_SYNTAX_COLOR_MULTIPLE_CURSOR_ACTIVE].bg = CE_COLOR_GREEN;
 
-          app->config_options.ui_fg_color = COLOR_DEFAULT;
-          app->config_options.ui_bg_color = COLOR_BRIGHT_BLACK;
-          app->config_options.message_fg_color = COLOR_RED;
-          app->config_options.message_bg_color = COLOR_BRIGHT_BLACK;
+          app->config_options.ui_fg_color = CE_COLOR_DEFAULT;
+          app->config_options.ui_bg_color = CE_COLOR_BRIGHT_BLACK;
+          app->config_options.message_fg_color = CE_COLOR_RED;
+          app->config_options.message_bg_color = CE_COLOR_BRIGHT_BLACK;
 
           app->syntax_defs = config->syntax_defs;
      }
