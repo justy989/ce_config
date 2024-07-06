@@ -15,12 +15,12 @@ typedef struct{
 }Config_t;
 
 #if defined(PLATFORM_WINDOWS)
-__declspec( dllimport )
+__declspec(dllimport)
 #endif
 bool ce_init(CeApp_t* app);
 
 #if defined(PLATFORM_WINDOWS)
-__declspec( dllimport )
+__declspec(dllimport)
 #endif
 bool ce_free(CeApp_t* app);
 
