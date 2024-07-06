@@ -129,7 +129,7 @@ bool ce_init(CeApp_t* app){
           // GUI options
           config_options->gui_window_width = 1980;
           config_options->gui_window_height = 1024;
-          config_options->gui_font_size = 16;
+          config_options->gui_font_size = 22;
           config_options->gui_font_line_separation = 1;
 #if defined(PLATFORM_WINDOWS)
           strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
