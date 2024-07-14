@@ -32,8 +32,6 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
 CeCommandStatus_t command_hot_mark_set(CeCommand_t* command, void* user_data);
 CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data);
 CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data);
-CeCommandStatus_t command_cscope_symbol_under_cursor(CeCommand_t* command, void* user_data);
-CeCommandStatus_t command_cscope_caller_under_cursor(CeCommand_t* command, void* user_data);
 
 bool ce_init(CeApp_t* app){
      Config_t* config = malloc(sizeof(*config));
@@ -53,6 +51,7 @@ bool ce_init(CeApp_t* app){
           config_options->apply_completion_key = CE_TAB;
           config_options->cycle_next_completion_key = ce_ctrl_key('n');
           config_options->cycle_prev_completion_key = ce_ctrl_key('p');
+          config_options->clangd_trigger_completion_key = ce_ctrl_key('y');
 
           config_options->color_defs[CE_COLOR_BLACK].red = 32;
           config_options->color_defs[CE_COLOR_BLACK].green = 32;
@@ -133,8 +132,10 @@ bool ce_init(CeApp_t* app){
           config_options->gui_font_line_separation = 1;
 #if defined(PLATFORM_WINDOWS)
           strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
+          strncpy(config_options->clangd_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\ce\\clangd.exe", MAX_PATH_LEN);
 #else
           strncpy(config_options->gui_font_path, "/home/jtiff/font/Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
+          strncpy(config_options->clangd_path, "/home/jtardiff/clangd_18.1.3/bin/clangd", MAX_PATH_LEN);
 #endif
      }
 
@@ -194,6 +195,9 @@ bool ce_init(CeApp_t* app){
                {{268},              "shell_command make"},
                {{'\\', '-'},        "font_adjust_size -2"},
                {{'\\', '+'},        "font_adjust_size +2"},
+               {{'\\', 'd'},        "clang_goto_def"},
+               {{'\\', 'l'},        "clang_goto_decl"},
+               {{'\\', 't'},        "clang_goto_type_def"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
@@ -264,9 +268,7 @@ bool ce_init(CeApp_t* app){
           CeCommandEntry_t command_entries[] = {
                {command_hot_mark_set, "hot_mark_set", "set the hot mark"},
                {command_hot_mark_goto, "hot_mark_goto", "goto the hot mark"},
-               {command_grep_word_under_cursor, "grep_word_under_cursor", "run 'fgrep -n <word> *' on the word under the cursor"},
-               {command_cscope_symbol_under_cursor, "cscope_symbol_under_cursor", "run 'cscope -L1<word>' on the word under the cursor"},
-               {command_cscope_caller_under_cursor, "cscope_caller_under_cursor", "run 'cscope -L3<word>' on the word under the cursor"},
+               {command_grep_word_under_cursor, "grep_word_under_cursor", "run 'fgrep -n <word> *' on the word under the cursor"}
           };
 
           int64_t command_entry_count = sizeof(command_entries) / sizeof(command_entries[0]);
@@ -408,12 +410,4 @@ CeCommandStatus_t run_command_on_word_under_cursor(CeCommand_t* command, void* u
 
 CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data){
      return run_command_on_word_under_cursor(command, user_data, "fgrep -n %s *");
-}
-
-CeCommandStatus_t command_cscope_symbol_under_cursor(CeCommand_t* command, void* user_data){
-     return run_command_on_word_under_cursor(command, user_data, "cscope -L1%s");
-}
-
-CeCommandStatus_t command_cscope_caller_under_cursor(CeCommand_t* command, void* user_data){
-     return run_command_on_word_under_cursor(command, user_data, "cscope -L3%s");
 }
