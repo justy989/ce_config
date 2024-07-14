@@ -132,7 +132,7 @@ bool ce_init(CeApp_t* app){
           config_options->gui_font_line_separation = 1;
 #if defined(PLATFORM_WINDOWS)
           strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
-          strncpy(config_options->clangd_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\ce\\clangd.exe", MAX_PATH_LEN);
+          strncpy(config_options->clangd_path, "C:\\Users\\jtiff\\Desktop\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin\\clangd", MAX_PATH_LEN);
 #else
           strncpy(config_options->gui_font_path, "/home/jtiff/font/Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
           strncpy(config_options->clangd_path, "/home/jtardiff/clangd_18.1.3/bin/clangd", MAX_PATH_LEN);
