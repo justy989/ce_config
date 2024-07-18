@@ -133,6 +133,7 @@ bool ce_init(CeApp_t* app){
 #if defined(PLATFORM_WINDOWS)
           strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
           strncpy(config_options->clangd_path, "C:\\Users\\jtiff\\Desktop\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin\\clangd", MAX_PATH_LEN);
+          strncpy(config_options->clang_format_path, "C:\\Users\\jtiff\\Desktop\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin\\clang-format.exe", MAX_PATH_LEN);
 #else
           strncpy(config_options->gui_font_path, "/home/jtiff/font/Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
           strncpy(config_options->clangd_path, "/home/jtardiff/clangd_18.1.3/bin/clangd", MAX_PATH_LEN);
@@ -189,15 +190,14 @@ bool ce_init(CeApp_t* app){
                {{' '},              "hot_mark_set"},
                {{KEY_ONLY_BACKSPACE},"hot_mark_goto"},
                {{'\\', 'w'},        "grep_word_under_cursor"},
-               {{'\\', 's'},        "cscope_symbol_under_cursor"},
-               {{'\\', 'a'},        "cscope_caller_under_cursor"},
-               {{'\\', 'f'},        "load_cached_files"},
                {{268},              "shell_command make"},
                {{'\\', '-'},        "font_adjust_size -2"},
                {{'\\', '+'},        "font_adjust_size +2"},
                {{'\\', 'd'},        "clang_goto_def"},
                {{'\\', 'l'},        "clang_goto_decl"},
                {{'\\', 't'},        "clang_goto_type_def"},
+               {{'\\', 'f'},        "clang_format_file"},
+               {{'\\', 's'},        "clang_format_selection"},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
