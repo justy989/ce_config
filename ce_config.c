@@ -49,6 +49,7 @@ bool ce_init(CeApp_t* app){
           config_options->completion_line_limit = 15;
           config_options->message_display_time_usec = 5000000; // 5 seconds
           config_options->apply_completion_key = CE_TAB;
+          config_options->mouse_wheel_line_scroll = 5;
           config_options->cycle_next_completion_key = ce_ctrl_key('n');
           config_options->cycle_prev_completion_key = ce_ctrl_key('p');
           config_options->clangd_trigger_completion_key = ce_ctrl_key('y');
