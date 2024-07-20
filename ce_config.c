@@ -48,15 +48,15 @@ bool ce_init(CeApp_t* app){
           config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
           config_options->completion_line_limit = 15;
           config_options->message_display_time_usec = 5000000; // 5 seconds
+          config_options->popup_view_height = 10;
           config_options->apply_completion_key = CE_TAB;
-          config_options->mouse_wheel_line_scroll = 5;
           config_options->cycle_next_completion_key = ce_ctrl_key('n');
           config_options->cycle_prev_completion_key = ce_ctrl_key('p');
           config_options->clangd_trigger_completion_key = ce_ctrl_key('y');
 
-          config_options->color_defs[CE_COLOR_BLACK].red = 32;
-          config_options->color_defs[CE_COLOR_BLACK].green = 32;
-          config_options->color_defs[CE_COLOR_BLACK].blue = 32;
+          config_options->color_defs[CE_COLOR_BLACK].red = 36;
+          config_options->color_defs[CE_COLOR_BLACK].green = 36;
+          config_options->color_defs[CE_COLOR_BLACK].blue = 36;
 
           config_options->color_defs[CE_COLOR_RED].red = 137;
           config_options->color_defs[CE_COLOR_RED].green = 56;
@@ -82,13 +82,13 @@ bool ce_init(CeApp_t* app){
           config_options->color_defs[CE_COLOR_CYAN].green = 125;
           config_options->color_defs[CE_COLOR_CYAN].blue = 108;
 
-          config_options->color_defs[CE_COLOR_WHITE].red = 42;
-          config_options->color_defs[CE_COLOR_WHITE].green = 42;
-          config_options->color_defs[CE_COLOR_WHITE].blue = 42;
+          config_options->color_defs[CE_COLOR_WHITE].red = 48;
+          config_options->color_defs[CE_COLOR_WHITE].green = 48;
+          config_options->color_defs[CE_COLOR_WHITE].blue = 48;
 
-          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].red = 36;
-          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].green = 36;
-          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].blue = 36;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].red = 42;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].green = 42;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].blue = 42;
 
           config_options->color_defs[CE_COLOR_BRIGHT_RED].red = 157;
           config_options->color_defs[CE_COLOR_BRIGHT_RED].green = 110;
@@ -122,15 +122,16 @@ bool ce_init(CeApp_t* app){
           config_options->color_defs[CE_COLOR_FOREGROUND].green = 218;
           config_options->color_defs[CE_COLOR_FOREGROUND].blue = 218;
 
-          config_options->color_defs[CE_COLOR_BACKGROUND].red = 25;
-          config_options->color_defs[CE_COLOR_BACKGROUND].green = 25;
-          config_options->color_defs[CE_COLOR_BACKGROUND].blue = 25;
+          config_options->color_defs[CE_COLOR_BACKGROUND].red = 28;
+          config_options->color_defs[CE_COLOR_BACKGROUND].green = 28;
+          config_options->color_defs[CE_COLOR_BACKGROUND].blue = 28;
 
           // GUI options
           config_options->gui_window_width = 1980;
           config_options->gui_window_height = 1024;
           config_options->gui_font_size = 22;
           config_options->gui_font_line_separation = 1;
+          config_options->mouse_wheel_line_scroll = 5;
 #if defined(PLATFORM_WINDOWS)
           strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
           strncpy(config_options->clangd_path, "C:\\Users\\jtiff\\Desktop\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin\\clangd", MAX_PATH_LEN);
@@ -172,6 +173,8 @@ bool ce_init(CeApp_t* app){
                {{'/'},              "search forward"},
                {{'?'},              "search backward"},
                {{':'},              "command"},
+               {{'='},              "open_popup_view"},
+               {{'-'},              "close_popup_view"},
                {{'g', 't'},         "select_adjacent_tab right"},
                {{'g', 'T'},         "select_adjacent_tab left"},
                {{'\\', '/'},        "regex_search forward"},
@@ -199,6 +202,7 @@ bool ce_init(CeApp_t* app){
                {{'\\', 't'},        "clang_goto_type_def"},
                {{'\\', 'f'},        "clang_format_file"},
                {{'\\', 's'},        "clang_format_selection"},
+               {{'\\', 'e'},        "open_popup_view \"[clangd diagnostics]\""},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
