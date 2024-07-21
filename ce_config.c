@@ -133,7 +133,7 @@ bool ce_init(CeApp_t* app){
           config_options->gui_font_line_separation = 1;
           config_options->mouse_wheel_line_scroll = 5;
 #if defined(PLATFORM_WINDOWS)
-          strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
+          strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\Documents\\Github\\ce_config\\build\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
           strncpy(config_options->clangd_path, "C:\\Users\\jtiff\\Desktop\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin\\clangd", MAX_PATH_LEN);
           strncpy(config_options->clang_format_path, "C:\\Users\\jtiff\\Desktop\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin\\clang-format.exe", MAX_PATH_LEN);
 #else
@@ -186,10 +186,9 @@ bool ce_init(CeApp_t* app){
                {{ce_ctrl_key('o')}, "jump_list previous"},
                {{ce_ctrl_key('i')}, "jump_list next"},
                // {{ce_ctrl_key('e')}, ""},
-               {{'\\', 'b'},        "shell_command ./build"},
+               {{'\\', 'b'},        "shell_command build.bat"},
                {{'\\', 'c'},        "shell_command ./clean"},
-               {{'\\', 'g'},        "shell_command ./game"},
-               {{'\\', 'r'},        "replace_all"},
+               {{'\\', 'g'},        "shell_command build\\crate.exe"},
                {{'K'},              "man_page_on_word_under_cursor"},
                {{' '},              "hot_mark_set"},
                {{KEY_ONLY_BACKSPACE},"hot_mark_goto"},
@@ -200,6 +199,7 @@ bool ce_init(CeApp_t* app){
                {{'\\', 'd'},        "clang_goto_def"},
                {{'\\', 'l'},        "clang_goto_decl"},
                {{'\\', 't'},        "clang_goto_type_def"},
+               {{'\\', 'r'},        "clang_find_references"},
                {{'\\', 'f'},        "clang_format_file"},
                {{'\\', 's'},        "clang_format_selection"},
                {{'\\', 'e'},        "open_popup_view \"[clangd diagnostics]\""},
