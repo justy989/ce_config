@@ -144,6 +144,7 @@ bool ce_init(CeApp_t* app){
 #else
           strncpy(config_options->gui_font_path, "/home/jtiff/font/Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
           strncpy(config_options->clangd_path, "/home/jtardiff/clangd_18.1.3/bin/clangd", MAX_PATH_LEN);
+          strncpy(config_options->clang_format_path, "/usr/bin/clang-format-7", MAX_PATH_LEN);
 #endif
      }
 
@@ -294,12 +295,14 @@ bool ce_free(CeApp_t* app){
      return true;
 }
 
+#if 0
 static bool string_ends_with(const char* str, const char* pattern){
      int64_t str_len = strlen(str);
      int64_t pattern_len = strlen(pattern);
      if(str_len < pattern_len) return false;
      return strncmp(str + (str_len - pattern_len), pattern, pattern_len) == 0;
 }
+#endif
 
 bool ce_on_save_file(CeApp_t* app, CeBuffer_t* buffer){
 #if 0
