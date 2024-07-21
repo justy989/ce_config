@@ -24,6 +24,11 @@ __declspec(dllimport)
 #endif
 bool ce_free(CeApp_t* app);
 
+#if defined(PLATFORM_WINDOWS)
+__declspec(dllimport)
+#endif
+bool ce_on_save_file(CeApp_t* app, CeBuffer_t* buffer);
+
 CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, const CeVim_t* vim, CeRune_t key);
 bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
                                 CePoint_t* cursor, CeVimVisualData_t* visual, CeVimBufferData_t* buffer_data,
@@ -286,6 +291,27 @@ bool ce_init(CeApp_t* app){
 bool ce_free(CeApp_t* app){
      Config_t* config = app->user_config_data;
      free(config);
+     return true;
+}
+
+static bool string_ends_with(const char* str, const char* pattern){
+     int64_t str_len = strlen(str);
+     int64_t pattern_len = strlen(pattern);
+     if(str_len < pattern_len) return false;
+     return strncmp(str + (str_len - pattern_len), pattern, pattern_len) == 0;
+}
+
+bool ce_on_save_file(CeApp_t* app, CeBuffer_t* buffer){
+#if 0
+     if(string_ends_with(buffer->name, ".c") ||
+        string_ends_with(buffer->name, ".h") ||
+        string_ends_with(buffer->name, ".cpp") ||
+        string_ends_with(buffer->name, ".hpp")){
+         return ce_clang_format_buffer(app->config_options.clang_format_path,
+                                       buffer,
+                                       (CePoint_t){0, 0});
+     }
+#endif
      return true;
 }
 
