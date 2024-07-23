@@ -203,11 +203,10 @@ bool ce_init(CeApp_t* app){
                {{'\\', '-'},        "font_adjust_size -2"},
                {{'\\', '+'},        "font_adjust_size +2"},
                {{'\\', 'd'},        "clang_goto_def"},
-               {{'\\', 'l'},        "clang_goto_decl"},
+               {{'\\', 'l'},        "load_discovered_file"},
                {{'\\', 't'},        "clang_goto_type_def"},
                {{'\\', 'r'},        "clang_find_references"},
-               {{'\\', 'f'},        "clang_format_file"},
-               {{'\\', 's'},        "clang_format_selection"},
+               {{'\\', 'f'},        "clang_format"},
                {{'\\', 'e'},        "open_popup_view \"[clangd diagnostics]\""},
           };
 
