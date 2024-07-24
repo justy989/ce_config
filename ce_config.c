@@ -24,6 +24,11 @@ __declspec(dllimport)
 #endif
 bool ce_free(CeApp_t* app);
 
+#if defined(PLATFORM_WINDOWS)
+__declspec(dllimport)
+#endif
+bool ce_on_save_file(CeApp_t* app, CeBuffer_t* buffer);
+
 CeVimParseResult_t custom_vim_parse_verb_substitute(CeVimAction_t* action, const CeVim_t* vim, CeRune_t key);
 bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRange_t motion_range, CeView_t* view,
                                 CePoint_t* cursor, CeVimVisualData_t* visual, CeVimBufferData_t* buffer_data,
@@ -32,8 +37,6 @@ bool custom_vim_verb_substitute(CeVim_t* vim, const CeVimAction_t* action, CeRan
 CeCommandStatus_t command_hot_mark_set(CeCommand_t* command, void* user_data);
 CeCommandStatus_t command_hot_mark_goto(CeCommand_t* command, void* user_data);
 CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data);
-CeCommandStatus_t command_cscope_symbol_under_cursor(CeCommand_t* command, void* user_data);
-CeCommandStatus_t command_cscope_caller_under_cursor(CeCommand_t* command, void* user_data);
 
 bool ce_init(CeApp_t* app){
      Config_t* config = malloc(sizeof(*config));
@@ -50,13 +53,15 @@ bool ce_init(CeApp_t* app){
           config_options->visual_line_display_type = CE_VISUAL_LINE_DISPLAY_TYPE_EXCLUDE_NEWLINE;
           config_options->completion_line_limit = 15;
           config_options->message_display_time_usec = 5000000; // 5 seconds
+          config_options->popup_view_height = 10;
           config_options->apply_completion_key = CE_TAB;
           config_options->cycle_next_completion_key = ce_ctrl_key('n');
           config_options->cycle_prev_completion_key = ce_ctrl_key('p');
+          config_options->clangd_trigger_completion_key = ce_ctrl_key('y');
 
-          config_options->color_defs[CE_COLOR_BLACK].red = 32;
-          config_options->color_defs[CE_COLOR_BLACK].green = 32;
-          config_options->color_defs[CE_COLOR_BLACK].blue = 32;
+          config_options->color_defs[CE_COLOR_BLACK].red = 36;
+          config_options->color_defs[CE_COLOR_BLACK].green = 36;
+          config_options->color_defs[CE_COLOR_BLACK].blue = 36;
 
           config_options->color_defs[CE_COLOR_RED].red = 137;
           config_options->color_defs[CE_COLOR_RED].green = 56;
@@ -82,13 +87,13 @@ bool ce_init(CeApp_t* app){
           config_options->color_defs[CE_COLOR_CYAN].green = 125;
           config_options->color_defs[CE_COLOR_CYAN].blue = 108;
 
-          config_options->color_defs[CE_COLOR_WHITE].red = 42;
-          config_options->color_defs[CE_COLOR_WHITE].green = 42;
-          config_options->color_defs[CE_COLOR_WHITE].blue = 42;
+          config_options->color_defs[CE_COLOR_WHITE].red = 48;
+          config_options->color_defs[CE_COLOR_WHITE].green = 48;
+          config_options->color_defs[CE_COLOR_WHITE].blue = 48;
 
-          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].red = 36;
-          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].green = 36;
-          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].blue = 36;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].red = 42;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].green = 42;
+          config_options->color_defs[CE_COLOR_BRIGHT_BLACK].blue = 42;
 
           config_options->color_defs[CE_COLOR_BRIGHT_RED].red = 157;
           config_options->color_defs[CE_COLOR_BRIGHT_RED].green = 110;
@@ -122,19 +127,24 @@ bool ce_init(CeApp_t* app){
           config_options->color_defs[CE_COLOR_FOREGROUND].green = 218;
           config_options->color_defs[CE_COLOR_FOREGROUND].blue = 218;
 
-          config_options->color_defs[CE_COLOR_BACKGROUND].red = 25;
-          config_options->color_defs[CE_COLOR_BACKGROUND].green = 25;
-          config_options->color_defs[CE_COLOR_BACKGROUND].blue = 25;
+          config_options->color_defs[CE_COLOR_BACKGROUND].red = 28;
+          config_options->color_defs[CE_COLOR_BACKGROUND].green = 28;
+          config_options->color_defs[CE_COLOR_BACKGROUND].blue = 28;
 
           // GUI options
           config_options->gui_window_width = 1980;
           config_options->gui_window_height = 1024;
           config_options->gui_font_size = 22;
           config_options->gui_font_line_separation = 1;
+          config_options->mouse_wheel_line_scroll = 5;
 #if defined(PLATFORM_WINDOWS)
-          strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\source\\repos\\ce_config\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
+          strncpy(config_options->gui_font_path, "C:\\Users\\jtiff\\Documents\\Github\\ce_config\\build\\Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
+          strncpy(config_options->clangd_path, "C:\\Users\\jtiff\\Desktop\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin\\clangd", MAX_PATH_LEN);
+          strncpy(config_options->clang_format_path, "C:\\Users\\jtiff\\Desktop\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin\\clang-format.exe", MAX_PATH_LEN);
 #else
           strncpy(config_options->gui_font_path, "/home/jtiff/font/Inconsolata-SemiBold.ttf", MAX_PATH_LEN);
+          strncpy(config_options->clangd_path, "/home/jtardiff/clangd_18.1.3/bin/clangd", MAX_PATH_LEN);
+          strncpy(config_options->clang_format_path, "/usr/bin/clang-format-7", MAX_PATH_LEN);
 #endif
      }
 
@@ -169,6 +179,8 @@ bool ce_init(CeApp_t* app){
                {{'/'},              "search forward"},
                {{'?'},              "search backward"},
                {{':'},              "command"},
+               {{'='},              "open_popup_view"},
+               {{'-'},              "close_popup_view"},
                {{'g', 't'},         "select_adjacent_tab right"},
                {{'g', 'T'},         "select_adjacent_tab left"},
                {{'\\', '/'},        "regex_search forward"},
@@ -180,20 +192,22 @@ bool ce_init(CeApp_t* app){
                {{ce_ctrl_key('o')}, "jump_list previous"},
                {{ce_ctrl_key('i')}, "jump_list next"},
                // {{ce_ctrl_key('e')}, ""},
-               {{'\\', 'b'},        "shell_command ./build"},
+               {{'\\', 'b'},        "shell_command build.bat"},
                {{'\\', 'c'},        "shell_command ./clean"},
-               {{'\\', 'g'},        "shell_command ./game"},
-               {{'\\', 'r'},        "replace_all"},
+               {{'\\', 'g'},        "shell_command build\\crate.exe"},
                {{'K'},              "man_page_on_word_under_cursor"},
                {{' '},              "hot_mark_set"},
                {{KEY_ONLY_BACKSPACE},"hot_mark_goto"},
                {{'\\', 'w'},        "grep_word_under_cursor"},
-               {{'\\', 's'},        "cscope_symbol_under_cursor"},
-               {{'\\', 'a'},        "cscope_caller_under_cursor"},
-               {{'\\', 'f'},        "load_cached_files"},
                {{268},              "shell_command make"},
                {{'\\', '-'},        "font_adjust_size -2"},
                {{'\\', '+'},        "font_adjust_size +2"},
+               {{'\\', 'd'},        "clang_goto_def"},
+               {{'\\', 'l'},        "load_discovered_file"},
+               {{'\\', 't'},        "clang_goto_type_def"},
+               {{'\\', 'r'},        "clang_find_references"},
+               {{'\\', 'f'},        "clang_format"},
+               {{'\\', 'e'},        "open_popup_view \"[clangd diagnostics]\""},
           };
 
           ce_convert_bind_defs(&app->key_binds, normal_mode_bind_defs, sizeof(normal_mode_bind_defs) / sizeof(normal_mode_bind_defs[0]));
@@ -264,9 +278,7 @@ bool ce_init(CeApp_t* app){
           CeCommandEntry_t command_entries[] = {
                {command_hot_mark_set, "hot_mark_set", "set the hot mark"},
                {command_hot_mark_goto, "hot_mark_goto", "goto the hot mark"},
-               {command_grep_word_under_cursor, "grep_word_under_cursor", "run 'fgrep -n <word> *' on the word under the cursor"},
-               {command_cscope_symbol_under_cursor, "cscope_symbol_under_cursor", "run 'cscope -L1<word>' on the word under the cursor"},
-               {command_cscope_caller_under_cursor, "cscope_caller_under_cursor", "run 'cscope -L3<word>' on the word under the cursor"},
+               {command_grep_word_under_cursor, "grep_word_under_cursor", "run 'fgrep -n <word> *' on the word under the cursor"}
           };
 
           int64_t command_entry_count = sizeof(command_entries) / sizeof(command_entries[0]);
@@ -279,6 +291,29 @@ bool ce_init(CeApp_t* app){
 bool ce_free(CeApp_t* app){
      Config_t* config = app->user_config_data;
      free(config);
+     return true;
+}
+
+#if 0
+static bool string_ends_with(const char* str, const char* pattern){
+     int64_t str_len = strlen(str);
+     int64_t pattern_len = strlen(pattern);
+     if(str_len < pattern_len) return false;
+     return strncmp(str + (str_len - pattern_len), pattern, pattern_len) == 0;
+}
+#endif
+
+bool ce_on_save_file(CeApp_t* app, CeBuffer_t* buffer){
+#if 0
+     if(string_ends_with(buffer->name, ".c") ||
+        string_ends_with(buffer->name, ".h") ||
+        string_ends_with(buffer->name, ".cpp") ||
+        string_ends_with(buffer->name, ".hpp")){
+         return ce_clang_format_buffer(app->config_options.clang_format_path,
+                                       buffer,
+                                       (CePoint_t){0, 0});
+     }
+#endif
      return true;
 }
 
@@ -408,12 +443,4 @@ CeCommandStatus_t run_command_on_word_under_cursor(CeCommand_t* command, void* u
 
 CeCommandStatus_t command_grep_word_under_cursor(CeCommand_t* command, void* user_data){
      return run_command_on_word_under_cursor(command, user_data, "fgrep -n %s *");
-}
-
-CeCommandStatus_t command_cscope_symbol_under_cursor(CeCommand_t* command, void* user_data){
-     return run_command_on_word_under_cursor(command, user_data, "cscope -L1%s");
-}
-
-CeCommandStatus_t command_cscope_caller_under_cursor(CeCommand_t* command, void* user_data){
-     return run_command_on_word_under_cursor(command, user_data, "cscope -L3%s");
 }

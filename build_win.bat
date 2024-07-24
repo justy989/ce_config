@@ -8,10 +8,12 @@ cl ^
   /I "..\ce\external\include" ^
   ..\ce\ce.c ^
   ..\ce\ce_app.c ^
+  ..\ce\ce_clangd.c ^
   ..\ce\ce_command.c ^
   ..\ce\ce_commands.c ^
   ..\ce\ce_complete.c ^
   ..\ce\ce_draw_gui.c ^
+  ..\ce\ce_json.c ^
   ..\ce\ce_layout.c ^
   ..\ce\ce_macros.c ^
   ..\ce\ce_regex_windows.cpp ^
