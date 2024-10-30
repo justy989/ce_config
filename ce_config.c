@@ -132,9 +132,9 @@ bool ce_init(CeApp_t* app){
           config_options->color_defs[CE_COLOR_BACKGROUND].blue = 28;
 
           // GUI options
-          config_options->gui_window_width = 1980;
-          config_options->gui_window_height = 1024;
-          config_options->gui_font_size = 22;
+          config_options->gui_window_width = 1024;
+          config_options->gui_window_height = 768;
+          config_options->gui_font_size = 20;
           config_options->gui_font_line_separation = 1;
           config_options->mouse_wheel_line_scroll = 5;
 #if defined(PLATFORM_WINDOWS)
@@ -191,10 +191,10 @@ bool ce_init(CeApp_t* app){
                {{343},              "goto_destination_in_line"},
                {{ce_ctrl_key('o')}, "jump_list previous"},
                {{ce_ctrl_key('i')}, "jump_list next"},
-               // {{ce_ctrl_key('e')}, ""},
-               {{'\\', 'b'},        "shell_command build.bat"},
-               {{'\\', 'c'},        "shell_command ./clean"},
-               {{'\\', 'g'},        "shell_command build\\crate.exe"},
+               {{'\\', 'b'},        "shell_command build_dev.bat"},
+               {{'\\', 'n'},        "shell_command run_dev.bat"},
+               {{'\\', 'm'},        "shell_command build_and_run_dev.bat"},
+               {{'\\', 'u'},        "shell_command unittest.bat"},
                {{'K'},              "man_page_on_word_under_cursor"},
                {{' '},              "hot_mark_set"},
                {{KEY_ONLY_BACKSPACE},"hot_mark_goto"},
@@ -207,6 +207,7 @@ bool ce_init(CeApp_t* app){
                {{'\\', 't'},        "clang_goto_type_def"},
                {{'\\', 'r'},        "clang_find_references"},
                {{'\\', 'f'},        "clang_format"},
+               {{'\\', 's'},        "shell_command dev_jt.bat"},
                {{'\\', 'e'},        "open_popup_view \"[clangd diagnostics]\""},
           };
 
